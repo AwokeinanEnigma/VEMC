@@ -6,11 +6,8 @@ using JetBrains.Annotations;
 
 namespace fNbt
 {
-	// Token: 0x02000016 RID: 22
 	public sealed class NbtCompound : NbtTag, ICollection<NbtTag>, IEnumerable<NbtTag>, ICollection, IEnumerable
 	{
-		// Token: 0x17000040 RID: 64
-		// (get) Token: 0x06000104 RID: 260 RVA: 0x00005A06 File Offset: 0x00003C06
 		public override NbtTagType TagType
 		{
 			get
@@ -18,24 +15,16 @@ namespace fNbt
 				return NbtTagType.Compound;
 			}
 		}
-
-		// Token: 0x06000105 RID: 261 RVA: 0x00005A0A File Offset: 0x00003C0A
 		public NbtCompound()
 		{
 		}
-
-		// Token: 0x06000106 RID: 262 RVA: 0x00005A1D File Offset: 0x00003C1D
 		public NbtCompound([CanBeNull] string tagName)
 		{
 			this.name = tagName;
 		}
-
-		// Token: 0x06000107 RID: 263 RVA: 0x00005A37 File Offset: 0x00003C37
 		public NbtCompound([NotNull] IEnumerable<NbtTag> tags) : this(null, tags)
 		{
 		}
-
-		// Token: 0x06000108 RID: 264 RVA: 0x00005A44 File Offset: 0x00003C44
 		public NbtCompound([CanBeNull] string tagName, [NotNull] IEnumerable<NbtTag> tags)
 		{
 			if (tags == null)
@@ -48,8 +37,6 @@ namespace fNbt
 				this.Add(newTag);
 			}
 		}
-
-		// Token: 0x06000109 RID: 265 RVA: 0x00005AB4 File Offset: 0x00003CB4
 		public NbtCompound([NotNull] NbtCompound other)
 		{
 			if (other == null)
@@ -62,8 +49,6 @@ namespace fNbt
 				this.Add((NbtTag)nbtTag.Clone());
 			}
 		}
-
-		// Token: 0x17000041 RID: 65
 		public override NbtTag this[[NotNull] string tagName]
 		{
 			[CanBeNull]
@@ -97,8 +82,6 @@ namespace fNbt
 				value.Parent = this;
 			}
 		}
-
-		// Token: 0x0600010C RID: 268 RVA: 0x00005BC8 File Offset: 0x00003DC8
 		[CanBeNull]
 		public T Get<T>([NotNull] string tagName) where T : NbtTag
 		{
@@ -113,8 +96,6 @@ namespace fNbt
 			}
 			return default(T);
 		}
-
-		// Token: 0x0600010D RID: 269 RVA: 0x00005C04 File Offset: 0x00003E04
 		[CanBeNull]
 		public NbtTag Get([NotNull] string tagName)
 		{
@@ -129,8 +110,6 @@ namespace fNbt
 			}
 			return null;
 		}
-
-		// Token: 0x0600010E RID: 270 RVA: 0x00005C34 File Offset: 0x00003E34
 		public bool TryGet<T>([NotNull] string tagName, out T result) where T : NbtTag
 		{
 			if (tagName == null)
@@ -146,8 +125,6 @@ namespace fNbt
 			result = default(T);
 			return false;
 		}
-
-		// Token: 0x0600010F RID: 271 RVA: 0x00005C78 File Offset: 0x00003E78
 		public bool TryGet([NotNull] string tagName, out NbtTag result)
 		{
 			if (tagName == null)
@@ -163,8 +140,6 @@ namespace fNbt
 			result = null;
 			return false;
 		}
-
-		// Token: 0x06000110 RID: 272 RVA: 0x00005CAC File Offset: 0x00003EAC
 		public void AddRange([NotNull] IEnumerable<NbtTag> newTags)
 		{
 			if (newTags == null)
@@ -176,8 +151,6 @@ namespace fNbt
 				this.Add(newTag);
 			}
 		}
-
-		// Token: 0x06000111 RID: 273 RVA: 0x00005D04 File Offset: 0x00003F04
 		[Pure]
 		public bool Contains([NotNull] string tagName)
 		{
@@ -187,8 +160,6 @@ namespace fNbt
 			}
 			return this.tags.ContainsKey(tagName);
 		}
-
-		// Token: 0x06000112 RID: 274 RVA: 0x00005D20 File Offset: 0x00003F20
 		public bool Remove([NotNull] string tagName)
 		{
 			if (tagName == null)
@@ -204,8 +175,6 @@ namespace fNbt
 			nbtTag.Parent = null;
 			return true;
 		}
-
-		// Token: 0x06000113 RID: 275 RVA: 0x00005D64 File Offset: 0x00003F64
 		internal void RenameTag([NotNull] string oldName, [NotNull] string newName)
 		{
 			NbtTag value;
@@ -220,9 +189,6 @@ namespace fNbt
 			this.tags.Remove(oldName);
 			this.tags.Add(newName, value);
 		}
-
-		// Token: 0x17000042 RID: 66
-		// (get) Token: 0x06000114 RID: 276 RVA: 0x00005DC1 File Offset: 0x00003FC1
 		[NotNull]
 		public IEnumerable<string> Names
 		{
@@ -231,9 +197,6 @@ namespace fNbt
 				return this.tags.Keys;
 			}
 		}
-
-		// Token: 0x17000043 RID: 67
-		// (get) Token: 0x06000115 RID: 277 RVA: 0x00005DCE File Offset: 0x00003FCE
 		[NotNull]
 		public IEnumerable<NbtTag> Tags
 		{
@@ -242,8 +205,6 @@ namespace fNbt
 				return this.tags.Values;
 			}
 		}
-
-		// Token: 0x06000116 RID: 278 RVA: 0x00005DDC File Offset: 0x00003FDC
 		internal override bool ReadTag(NbtBinaryReader readStream)
 		{
 			if (base.Parent != null && readStream.Selector != null && !readStream.Selector(this))
@@ -305,8 +266,6 @@ namespace fNbt
 			}
 			throw new NbtFormatException("Unsupported tag type found in NBT_Compound: " + nbtTagType);
 		}
-
-		// Token: 0x06000117 RID: 279 RVA: 0x00005EF8 File Offset: 0x000040F8
 		internal override void SkipTag(NbtBinaryReader readStream)
 		{
 			NbtTagType nbtTagType;
@@ -359,8 +318,6 @@ namespace fNbt
 			}
 			throw new NbtFormatException("Unsupported tag type found in NBT_Compound: " + nbtTagType);
 		}
-
-		// Token: 0x06000118 RID: 280 RVA: 0x00005FC6 File Offset: 0x000041C6
 		internal override void WriteTag(NbtBinaryWriter writeStream)
 		{
 			writeStream.Write(NbtTagType.Compound);
@@ -371,8 +328,6 @@ namespace fNbt
 			writeStream.Write(base.Name);
 			this.WriteData(writeStream);
 		}
-
-		// Token: 0x06000119 RID: 281 RVA: 0x00005FF8 File Offset: 0x000041F8
 		internal override void WriteData(NbtBinaryWriter writeStream)
 		{
 			foreach (NbtTag nbtTag in this.tags.Values)
@@ -381,20 +336,14 @@ namespace fNbt
 			}
 			writeStream.Write(NbtTagType.End);
 		}
-
-		// Token: 0x0600011A RID: 282 RVA: 0x00006058 File Offset: 0x00004258
 		public IEnumerator<NbtTag> GetEnumerator()
 		{
 			return this.tags.Values.GetEnumerator();
 		}
-
-		// Token: 0x0600011B RID: 283 RVA: 0x0000606F File Offset: 0x0000426F
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this.tags.Values.GetEnumerator();
 		}
-
-		// Token: 0x0600011C RID: 284 RVA: 0x00006088 File Offset: 0x00004288
 		public void Add([NotNull] NbtTag newTag)
 		{
 			if (newTag == null)
@@ -416,8 +365,6 @@ namespace fNbt
 			this.tags.Add(newTag.Name, newTag);
 			newTag.Parent = this;
 		}
-
-		// Token: 0x0600011D RID: 285 RVA: 0x000060F4 File Offset: 0x000042F4
 		public void Clear()
 		{
 			foreach (NbtTag nbtTag in this.tags.Values)
@@ -426,8 +373,6 @@ namespace fNbt
 			}
 			this.tags.Clear();
 		}
-
-		// Token: 0x0600011E RID: 286 RVA: 0x00006158 File Offset: 0x00004358
 		[Pure]
 		public bool Contains([NotNull] NbtTag tag)
 		{
@@ -437,14 +382,10 @@ namespace fNbt
 			}
 			return this.tags.ContainsValue(tag);
 		}
-
-		// Token: 0x0600011F RID: 287 RVA: 0x00006174 File Offset: 0x00004374
 		public void CopyTo(NbtTag[] array, int arrayIndex)
 		{
 			this.tags.Values.CopyTo(array, arrayIndex);
 		}
-
-		// Token: 0x06000120 RID: 288 RVA: 0x00006188 File Offset: 0x00004388
 		public bool Remove([NotNull] NbtTag tag)
 		{
 			if (tag == null)
@@ -463,9 +404,6 @@ namespace fNbt
 			}
 			return false;
 		}
-
-		// Token: 0x17000044 RID: 68
-		// (get) Token: 0x06000121 RID: 289 RVA: 0x000061EC File Offset: 0x000043EC
 		public int Count
 		{
 			get
@@ -473,9 +411,6 @@ namespace fNbt
 				return this.tags.Count;
 			}
 		}
-
-		// Token: 0x17000045 RID: 69
-		// (get) Token: 0x06000122 RID: 290 RVA: 0x000061F9 File Offset: 0x000043F9
 		bool ICollection<NbtTag>.IsReadOnly
 		{
 			get
@@ -483,15 +418,10 @@ namespace fNbt
 				return false;
 			}
 		}
-
-		// Token: 0x06000123 RID: 291 RVA: 0x000061FC File Offset: 0x000043FC
 		void ICollection.CopyTo(Array array, int index)
 		{
 			this.CopyTo((NbtTag[])array, index);
 		}
-
-		// Token: 0x17000046 RID: 70
-		// (get) Token: 0x06000124 RID: 292 RVA: 0x0000620B File Offset: 0x0000440B
 		object ICollection.SyncRoot
 		{
 			get
@@ -499,9 +429,6 @@ namespace fNbt
 				return ((ICollection)this.tags).SyncRoot;
 			}
 		}
-
-		// Token: 0x17000047 RID: 71
-		// (get) Token: 0x06000125 RID: 293 RVA: 0x00006218 File Offset: 0x00004418
 		bool ICollection.IsSynchronized
 		{
 			get
@@ -509,14 +436,10 @@ namespace fNbt
 				return false;
 			}
 		}
-
-		// Token: 0x06000126 RID: 294 RVA: 0x0000621B File Offset: 0x0000441B
 		public override object Clone()
 		{
 			return new NbtCompound(this);
 		}
-
-		// Token: 0x06000127 RID: 295 RVA: 0x00006224 File Offset: 0x00004424
 		internal override void PrettyPrint(StringBuilder sb, string indentString, int indentLevel)
 		{
 			for (int i = 0; i < indentLevel; i++)
@@ -544,8 +467,6 @@ namespace fNbt
 			}
 			sb.Append('}');
 		}
-
-		// Token: 0x0400006C RID: 108
 		private readonly Dictionary<string, NbtTag> tags = new Dictionary<string, NbtTag>();
 	}
 }

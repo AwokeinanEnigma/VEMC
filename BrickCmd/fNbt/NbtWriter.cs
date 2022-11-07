@@ -5,15 +5,11 @@ using JetBrains.Annotations;
 
 namespace fNbt
 {
-	// Token: 0x02000010 RID: 16
 	public sealed class NbtWriter
 	{
-		// Token: 0x06000093 RID: 147 RVA: 0x0000459A File Offset: 0x0000279A
 		public NbtWriter([NotNull] Stream stream, [NotNull] string rootTagName) : this(stream, rootTagName, true)
 		{
 		}
-
-		// Token: 0x06000094 RID: 148 RVA: 0x000045A8 File Offset: 0x000027A8
 		public NbtWriter([NotNull] Stream stream, [NotNull] string rootTagName, bool bigEndian)
 		{
 			if (rootTagName == null)
@@ -25,14 +21,7 @@ namespace fNbt
 			this.writer.Write(rootTagName);
 			this.parentType = NbtTagType.Compound;
 		}
-
-		// Token: 0x17000028 RID: 40
-		// (get) Token: 0x06000095 RID: 149 RVA: 0x000045F7 File Offset: 0x000027F7
-		// (set) Token: 0x06000096 RID: 150 RVA: 0x000045FF File Offset: 0x000027FF
 		public bool IsDone { get; private set; }
-
-		// Token: 0x17000029 RID: 41
-		// (get) Token: 0x06000097 RID: 151 RVA: 0x00004608 File Offset: 0x00002808
 		[NotNull]
 		public Stream BaseStream
 		{
@@ -41,15 +30,11 @@ namespace fNbt
 				return this.writer.BaseStream;
 			}
 		}
-
-		// Token: 0x06000098 RID: 152 RVA: 0x00004615 File Offset: 0x00002815
 		public void BeginCompound()
 		{
 			this.EnforceConstraints(null, NbtTagType.Compound);
 			this.GoDown(NbtTagType.Compound);
 		}
-
-		// Token: 0x06000099 RID: 153 RVA: 0x00004628 File Offset: 0x00002828
 		public void BeginCompound([NotNull] string tagName)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Compound);
@@ -57,8 +42,6 @@ namespace fNbt
 			this.writer.Write(10);
 			this.writer.Write(tagName);
 		}
-
-		// Token: 0x0600009A RID: 154 RVA: 0x00004654 File Offset: 0x00002854
 		public void EndCompound()
 		{
 			if (this.IsDone || this.parentType != NbtTagType.Compound)
@@ -68,8 +51,6 @@ namespace fNbt
 			this.GoUp();
 			this.writer.Write(NbtTagType.End);
 		}
-
-		// Token: 0x0600009B RID: 155 RVA: 0x00004688 File Offset: 0x00002888
 		public void BeginList(NbtTagType elementType, int size)
 		{
 			if (size < 0)
@@ -87,8 +68,6 @@ namespace fNbt
 			this.writer.Write((byte)elementType);
 			this.writer.Write(size);
 		}
-
-		// Token: 0x0600009C RID: 156 RVA: 0x000046F4 File Offset: 0x000028F4
 		public void BeginList([NotNull] string tagName, NbtTagType elementType, int size)
 		{
 			if (size < 0)
@@ -108,8 +87,6 @@ namespace fNbt
 			this.writer.Write((byte)elementType);
 			this.writer.Write(size);
 		}
-
-		// Token: 0x0600009D RID: 157 RVA: 0x0000477C File Offset: 0x0000297C
 		public void EndList()
 		{
 			if (this.parentType != NbtTagType.List || this.IsDone)
@@ -128,15 +105,11 @@ namespace fNbt
 			}
 			this.GoUp();
 		}
-
-		// Token: 0x0600009E RID: 158 RVA: 0x000047F9 File Offset: 0x000029F9
 		public void WriteByte(byte value)
 		{
 			this.EnforceConstraints(null, NbtTagType.Byte);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x0600009F RID: 159 RVA: 0x0000480F File Offset: 0x00002A0F
 		public void WriteByte([NotNull] string tagName, byte value)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Byte);
@@ -144,15 +117,11 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A0 RID: 160 RVA: 0x0000483D File Offset: 0x00002A3D
 		public void WriteDouble(double value)
 		{
 			this.EnforceConstraints(null, NbtTagType.Double);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A1 RID: 161 RVA: 0x00004853 File Offset: 0x00002A53
 		public void WriteDouble([NotNull] string tagName, double value)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Double);
@@ -160,15 +129,11 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A2 RID: 162 RVA: 0x00004881 File Offset: 0x00002A81
 		public void WriteFloat(float value)
 		{
 			this.EnforceConstraints(null, NbtTagType.Float);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A3 RID: 163 RVA: 0x00004897 File Offset: 0x00002A97
 		public void WriteFloat([NotNull] string tagName, float value)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Float);
@@ -176,15 +141,11 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A4 RID: 164 RVA: 0x000048C5 File Offset: 0x00002AC5
 		public void WriteInt(int value)
 		{
 			this.EnforceConstraints(null, NbtTagType.Int);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A5 RID: 165 RVA: 0x000048DB File Offset: 0x00002ADB
 		public void WriteInt([NotNull] string tagName, int value)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Int);
@@ -192,15 +153,11 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A6 RID: 166 RVA: 0x00004909 File Offset: 0x00002B09
 		public void WriteLong(long value)
 		{
 			this.EnforceConstraints(null, NbtTagType.Long);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A7 RID: 167 RVA: 0x0000491F File Offset: 0x00002B1F
 		public void WriteLong([NotNull] string tagName, long value)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Long);
@@ -208,15 +165,11 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A8 RID: 168 RVA: 0x0000494D File Offset: 0x00002B4D
 		public void WriteShort(short value)
 		{
 			this.EnforceConstraints(null, NbtTagType.Short);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000A9 RID: 169 RVA: 0x00004963 File Offset: 0x00002B63
 		public void WriteShort([NotNull] string tagName, short value)
 		{
 			this.EnforceConstraints(tagName, NbtTagType.Short);
@@ -224,8 +177,6 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000AA RID: 170 RVA: 0x00004991 File Offset: 0x00002B91
 		public void WriteString([NotNull] string value)
 		{
 			if (value == null)
@@ -235,8 +186,6 @@ namespace fNbt
 			this.EnforceConstraints(null, NbtTagType.String);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000AB RID: 171 RVA: 0x000049B5 File Offset: 0x00002BB5
 		public void WriteString([NotNull] string tagName, [NotNull] string value)
 		{
 			if (value == null)
@@ -248,8 +197,6 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.writer.Write(value);
 		}
-
-		// Token: 0x060000AC RID: 172 RVA: 0x000049F1 File Offset: 0x00002BF1
 		public void WriteByteArray([NotNull] byte[] data)
 		{
 			if (data == null)
@@ -258,8 +205,6 @@ namespace fNbt
 			}
 			this.WriteByteArray(data, 0, data.Length);
 		}
-
-		// Token: 0x060000AD RID: 173 RVA: 0x00004A0C File Offset: 0x00002C0C
 		public void WriteByteArray([NotNull] byte[] data, int offset, int count)
 		{
 			NbtWriter.CheckArray(data, offset, count);
@@ -267,8 +212,6 @@ namespace fNbt
 			this.writer.Write(count);
 			this.writer.Write(data, offset, count);
 		}
-
-		// Token: 0x060000AE RID: 174 RVA: 0x00004A38 File Offset: 0x00002C38
 		public void WriteByteArray([NotNull] string tagName, [NotNull] byte[] data)
 		{
 			if (data == null)
@@ -277,8 +220,6 @@ namespace fNbt
 			}
 			this.WriteByteArray(tagName, data, 0, data.Length);
 		}
-
-		// Token: 0x060000AF RID: 175 RVA: 0x00004A54 File Offset: 0x00002C54
 		public void WriteByteArray([NotNull] string tagName, [NotNull] byte[] data, int offset, int count)
 		{
 			NbtWriter.CheckArray(data, offset, count);
@@ -288,8 +229,6 @@ namespace fNbt
 			this.writer.Write(count);
 			this.writer.Write(data, offset, count);
 		}
-
-		// Token: 0x060000B0 RID: 176 RVA: 0x00004AA8 File Offset: 0x00002CA8
 		public void WriteByteArray([NotNull] Stream dataSource, int count)
 		{
 			if (dataSource == null)
@@ -308,8 +247,6 @@ namespace fNbt
 			byte[] buffer = new byte[num];
 			this.WriteByteArray(dataSource, count, buffer);
 		}
-
-		// Token: 0x060000B1 RID: 177 RVA: 0x00004B0C File Offset: 0x00002D0C
 		public void WriteByteArray([NotNull] Stream dataSource, int count, [NotNull] byte[] buffer)
 		{
 			if (dataSource == null)
@@ -335,8 +272,6 @@ namespace fNbt
 			this.EnforceConstraints(null, NbtTagType.ByteArray);
 			this.WriteByteArrayFromStreamImpl(dataSource, count, buffer);
 		}
-
-		// Token: 0x060000B2 RID: 178 RVA: 0x00004B8C File Offset: 0x00002D8C
 		public void WriteByteArray([NotNull] string tagName, [NotNull] Stream dataSource, int count)
 		{
 			if (dataSource == null)
@@ -351,8 +286,6 @@ namespace fNbt
 			byte[] buffer = new byte[num];
 			this.WriteByteArray(tagName, dataSource, count, buffer);
 		}
-
-		// Token: 0x060000B3 RID: 179 RVA: 0x00004BD8 File Offset: 0x00002DD8
 		public void WriteByteArray([NotNull] string tagName, [NotNull] Stream dataSource, int count, [NotNull] byte[] buffer)
 		{
 			if (dataSource == null)
@@ -380,8 +313,6 @@ namespace fNbt
 			this.writer.Write(tagName);
 			this.WriteByteArrayFromStreamImpl(dataSource, count, buffer);
 		}
-
-		// Token: 0x060000B4 RID: 180 RVA: 0x00004C72 File Offset: 0x00002E72
 		public void WriteIntArray([NotNull] int[] data)
 		{
 			if (data == null)
@@ -390,8 +321,6 @@ namespace fNbt
 			}
 			this.WriteIntArray(data, 0, data.Length);
 		}
-
-		// Token: 0x060000B5 RID: 181 RVA: 0x00004C90 File Offset: 0x00002E90
 		public void WriteIntArray([NotNull] int[] data, int offset, int count)
 		{
 			NbtWriter.CheckArray(data, offset, count);
@@ -402,8 +331,6 @@ namespace fNbt
 				this.writer.Write(data[i]);
 			}
 		}
-
-		// Token: 0x060000B6 RID: 182 RVA: 0x00004CD4 File Offset: 0x00002ED4
 		public void WriteIntArray([NotNull] string tagName, [NotNull] int[] data)
 		{
 			if (data == null)
@@ -412,8 +339,6 @@ namespace fNbt
 			}
 			this.WriteIntArray(tagName, data, 0, data.Length);
 		}
-
-		// Token: 0x060000B7 RID: 183 RVA: 0x00004CF0 File Offset: 0x00002EF0
 		public void WriteIntArray([NotNull] string tagName, [NotNull] int[] data, int offset, int count)
 		{
 			NbtWriter.CheckArray(data, offset, count);
@@ -426,8 +351,6 @@ namespace fNbt
 				this.writer.Write(data[i]);
 			}
 		}
-
-		// Token: 0x060000B8 RID: 184 RVA: 0x00004D50 File Offset: 0x00002F50
 		public void WriteTag([NotNull] NbtTag tag)
 		{
 			if (tag == null)
@@ -442,8 +365,6 @@ namespace fNbt
 			}
 			tag.WriteData(this.writer);
 		}
-
-		// Token: 0x060000B9 RID: 185 RVA: 0x00004D9E File Offset: 0x00002F9E
 		public void Finish()
 		{
 			if (!this.IsDone)
@@ -451,8 +372,6 @@ namespace fNbt
 				throw new NbtFormatException("Cannot finish: not all tags have been closed yet.");
 			}
 		}
-
-		// Token: 0x060000BA RID: 186 RVA: 0x00004DB4 File Offset: 0x00002FB4
 		private void GoDown(NbtTagType thisType)
 		{
 			if (this.nodes == null)
@@ -472,8 +391,6 @@ namespace fNbt
 			this.listSize = 0;
 			this.listIndex = 0;
 		}
-
-		// Token: 0x060000BB RID: 187 RVA: 0x00004E38 File Offset: 0x00003038
 		private void GoUp()
 		{
 			if (this.nodes == null || this.nodes.Count == 0)
@@ -487,8 +404,6 @@ namespace fNbt
 			this.listSize = nbtWriterNode.ListSize;
 			this.listIndex = nbtWriterNode.ListIndex;
 		}
-
-		// Token: 0x060000BC RID: 188 RVA: 0x00004EA0 File Offset: 0x000030A0
 		private void EnforceConstraints([CanBeNull] string name, NbtTagType desiredType)
 		{
 			if (this.IsDone)
@@ -527,8 +442,6 @@ namespace fNbt
 				return;
 			}
 		}
-
-		// Token: 0x060000BD RID: 189 RVA: 0x00004F54 File Offset: 0x00003154
 		private static void CheckArray([NotNull] Array data, int offset, int count)
 		{
 			if (data == null)
@@ -548,8 +461,6 @@ namespace fNbt
 				throw new ArgumentException("count may not be greater than offset subtracted from the array length.");
 			}
 		}
-
-		// Token: 0x060000BE RID: 190 RVA: 0x00004FB0 File Offset: 0x000031B0
 		private void WriteByteArrayFromStreamImpl([NotNull] Stream dataSource, int count, [NotNull] byte[] buffer)
 		{
 			this.writer.Write(count);
@@ -562,26 +473,12 @@ namespace fNbt
 				this.writer.Write(buffer, 0, num);
 			}
 		}
-
-		// Token: 0x0400005A RID: 90
 		private const int MaxStreamCopyBufferSize = 8192;
-
-		// Token: 0x0400005B RID: 91
 		private readonly NbtBinaryWriter writer;
-
-		// Token: 0x0400005C RID: 92
 		private NbtTagType listType;
-
-		// Token: 0x0400005D RID: 93
 		private NbtTagType parentType;
-
-		// Token: 0x0400005E RID: 94
 		private int listIndex;
-
-		// Token: 0x0400005F RID: 95
 		private int listSize;
-
-		// Token: 0x04000060 RID: 96
 		private Stack<NbtWriterNode> nodes;
 	}
 }

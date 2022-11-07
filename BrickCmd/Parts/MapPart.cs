@@ -1,8 +1,4 @@
 ﻿// Decompiled with JetBrains decompiler
-// Type: VEMC.Parts.MapPart
-// Assembly: VEMC, Version=3.5.2.0, Culture=neutral, PublicKeyToken=null
-// MVID: D31E32F7-EF00-4E54-8BC6-F1DFA3DF5B6D
-// Assembly location: C:\Users\Tom\Documents\Mother4RestoredENIGMA_COPY\Mother4\bin\Debug\Brickroad.exe
 
 using fNbt;
 using System;

@@ -5,10 +5,8 @@ using System.Linq;
 
 namespace TiledSharp
 {
-	// Token: 0x0200006E RID: 110
 	public class TmxList<T> : KeyedCollection<string, T> where T : ITmxElement
 	{
-		// Token: 0x060003F4 RID: 1012 RVA: 0x00019C7C File Offset: 0x00017E7C
 		public new void Add(T t)
 		{
 			Tuple<TmxList<T>, string> tuple = Tuple.Create<TmxList<T>, string>(this, t.Name);
@@ -24,8 +22,6 @@ namespace TiledSharp
 			}
 			base.Add(t);
 		}
-
-		// Token: 0x060003F5 RID: 1013 RVA: 0x00019CE0 File Offset: 0x00017EE0
 		protected override string GetKeyForItem(T t)
 		{
 			Tuple<TmxList<T>, string> key = Tuple.Create<TmxList<T>, string>(this, t.Name);
@@ -39,8 +35,6 @@ namespace TiledSharp
 			}
 			return text;
 		}
-
-		// Token: 0x04000293 RID: 659
 		public static Dictionary<Tuple<TmxList<T>, string>, int> nameCount = new Dictionary<Tuple<TmxList<T>, string>, int>();
 	}
 }

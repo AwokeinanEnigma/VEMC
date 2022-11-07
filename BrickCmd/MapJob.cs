@@ -11,27 +11,17 @@ using TiledSharp;
 
 namespace VEMC
 {
-	// Token: 0x02000041 RID: 65
 	public class MapJob
 	{
-		// Token: 0x1700007A RID: 122
-		// (get) Token: 0x0600024D RID: 589 RVA: 0x0000A974 File Offset: 0x00008B74
-		// (set) Token: 0x0600024E RID: 590 RVA: 0x0000A97C File Offset: 0x00008B7C
 		public int Mode { get; private set; }
-
-		// Token: 0x0600024F RID: 591 RVA: 0x0000A988 File Offset: 0x00008B88
 		public MapJob()
 		{
 			this.Mode = 0;
 		}
-
-		// Token: 0x06000250 RID: 592 RVA: 0x0000B041 File Offset: 0x00009241
 		public void Open(string filename)
 		{
 			this.map = new TmxMap(filename);
 		}
-
-		// Token: 0x06000251 RID: 593 RVA: 0x0000B04F File Offset: 0x0000924F
 		public void CheckProperty(string property)
 		{
 			if (!this.map.Properties.ContainsKey(property))
@@ -39,8 +29,6 @@ namespace VEMC
 				throw new MapPropertyException(property);
 			}
 		}
-
-		// Token: 0x06000252 RID: 594 RVA: 0x0000B06B File Offset: 0x0000926B
 		public void ValidateMap()
 		{
 			this.CheckProperty("name");
@@ -61,8 +49,6 @@ namespace VEMC
 			}
 
 		}
-
-		// Token: 0x06000253 RID: 595 RVA: 0x0000B0FC File Offset: 0x000092FC
 		public void Process()
 		{
 			this.ValidateMap();
@@ -107,7 +93,6 @@ namespace VEMC
 			NbtCompound nbtCompound = new NbtCompound("map");
 			nbtFile.RootTag = nbtCompound;
 			this.Mode++;
-			// Console.WriteLine("1");
 			MapPart mapPart = new MapPart("head");
 			AddToHeader(mapPart);
 			string text = null;
@@ -499,22 +484,6 @@ namespace VEMC
 					string text5;
 					int num15 = 0;
 
-
-
-
-					/*foreach (KeyValuePair<string, string> entry in tmxObject9.Properties)
-                    {
-                        // do something with entry.Value or entry.Key
-                    }*/
-
-					/*while (tmxObject9.Properties.TryGetValue("enemy" + num15, out text5))
-					{
-						Console.WriteLine($"counter {num15}");
-
-                        num15++;
-
-					}*/
-
 					IEnumerable<KeyValuePair<string, string>> thing = tmxObject9.Properties.Where(x => x.Key.Contains("enemy"));
 					foreach (KeyValuePair<string, string> strung in thing)
 					{
@@ -525,7 +494,6 @@ namespace VEMC
 						});
 						Console.WriteLine($"Enemy: {array5[0]}");
 						list16.Add(new NbtString(array5[0]));
-						//Console.WriteLine($"added string");
 						list17.Add(new NbtByte(byte.Parse(array5[1])));
 					}
 					NbtList newTag = new NbtList("enids", list16, NbtTagType.String);
@@ -661,8 +629,6 @@ namespace VEMC
 			string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, this.map.Properties["name"]);
 			nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
 		}
-
-		// Token: 0x06000254 RID: 596 RVA: 0x0000CBD4 File Offset: 0x0000ADD4
 		public List<List<IntPoint>> BuildMesh()
 		{
 			int height = this.map.Height;
@@ -711,8 +677,6 @@ namespace VEMC
 			meshBuilder.Simplify();
 			return meshBuilder.Solution;
 		}
-
-		// Token: 0x06000255 RID: 597 RVA: 0x0000CDAC File Offset: 0x0000AFAC
 		private uint CheckGraphicsManifest(string filename)
 		{
 			string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
@@ -743,8 +707,6 @@ namespace VEMC
 			}
 			return (uint)num;
 		}
-
-		// Token: 0x06000256 RID: 598 RVA: 0x0000CE58 File Offset: 0x0000B058
 		private Dictionary<string, List<TmxObjectGroup.TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
 		{
 			Dictionary<string, List<TmxObjectGroup.TmxObject>> dictionary = new Dictionary<string, List<TmxObjectGroup.TmxObject>>();
@@ -768,8 +730,6 @@ namespace VEMC
 			}
 			return dictionary;
 		}
-
-		// Token: 0x06000257 RID: 599 RVA: 0x0000CF18 File Offset: 0x0000B118
 		private TmxObjectGroup ObjectGroupByName(TmxList<TmxObjectGroup> list, string name)
 		{
 			foreach (TmxObjectGroup tmxObjectGroup in list)
@@ -781,8 +741,6 @@ namespace VEMC
 			}
 			throw new Exception("Object group with name \"" + name + "\" does not exist.");
 		}
-
-		// Token: 0x06000258 RID: 600 RVA: 0x0000CF8C File Offset: 0x0000B18C
 		private bool ObjectGroupExists(TmxList<TmxObjectGroup> list, string name)
 		{
 			foreach (TmxObjectGroup tmxObjectGroup in list)
@@ -794,11 +752,7 @@ namespace VEMC
 			}
 			return false;
 		}
-
-		// Token: 0x040000CE RID: 206
 		private TmxMap map;
-
-		// Token: 0x040000CF RID: 207
 		private List<Tuple<string, byte>> effectDict = new List<Tuple<string, byte>>
 		{
 			new Tuple<string, byte>("none", 0),
@@ -808,8 +762,6 @@ namespace VEMC
 			new Tuple<string, byte>("underwater", 4),
 			new Tuple<string, byte>("lighting", 5)
 		};
-
-		// Token: 0x040000D0 RID: 208
 		private Dictionary<int, Point[]> collisionMasks = new Dictionary<int, Point[]>
 		{
 			{

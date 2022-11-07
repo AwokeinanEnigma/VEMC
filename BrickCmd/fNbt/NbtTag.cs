@@ -5,21 +5,11 @@ using JetBrains.Annotations;
 
 namespace fNbt
 {
-	// Token: 0x02000013 RID: 19
 	public abstract class NbtTag : ICloneable
 	{
-		// Token: 0x1700002A RID: 42
-		// (get) Token: 0x060000C4 RID: 196 RVA: 0x0000500D File Offset: 0x0000320D
-		// (set) Token: 0x060000C5 RID: 197 RVA: 0x00005015 File Offset: 0x00003215
 		[CanBeNull]
 		public NbtTag Parent { get; internal set; }
-
-		// Token: 0x1700002B RID: 43
-		// (get) Token: 0x060000C6 RID: 198
 		public abstract NbtTagType TagType { get; }
-
-		// Token: 0x1700002C RID: 44
-		// (get) Token: 0x060000C7 RID: 199 RVA: 0x00005020 File Offset: 0x00003220
 		public bool HasValue
 		{
 			get
@@ -43,10 +33,6 @@ namespace fNbt
 				return false;
 			}
 		}
-
-		// Token: 0x1700002D RID: 45
-		// (get) Token: 0x060000C8 RID: 200 RVA: 0x00005054 File Offset: 0x00003254
-		// (set) Token: 0x060000C9 RID: 201 RVA: 0x0000505C File Offset: 0x0000325C
 		[CanBeNull]
 		public string Name
 		{
@@ -75,9 +61,6 @@ namespace fNbt
 				this.name = value;
 			}
 		}
-
-		// Token: 0x1700002E RID: 46
-		// (get) Token: 0x060000CA RID: 202 RVA: 0x000050B8 File Offset: 0x000032B8
 		[NotNull]
 		public string Path
 		{
@@ -101,20 +84,10 @@ namespace fNbt
 				return this.Parent.Path + '.' + this.Name;
 			}
 		}
-
-		// Token: 0x060000CB RID: 203
 		internal abstract bool ReadTag([NotNull] NbtBinaryReader readStream);
-
-		// Token: 0x060000CC RID: 204
 		internal abstract void SkipTag([NotNull] NbtBinaryReader readStream);
-
-		// Token: 0x060000CD RID: 205
 		internal abstract void WriteTag([NotNull] NbtBinaryWriter writeReader);
-
-		// Token: 0x060000CE RID: 206
 		internal abstract void WriteData([NotNull] NbtBinaryWriter writeReader);
-
-		// Token: 0x1700002F RID: 47
 		public virtual NbtTag this[string tagName]
 		{
 			get
@@ -126,8 +99,6 @@ namespace fNbt
 				throw new InvalidOperationException("String indexers only work on NbtCompound tags.");
 			}
 		}
-
-		// Token: 0x17000030 RID: 48
 		public virtual NbtTag this[int tagIndex]
 		{
 			get
@@ -139,9 +110,6 @@ namespace fNbt
 				throw new InvalidOperationException("Integer indexers only work on NbtList tags.");
 			}
 		}
-
-		// Token: 0x17000031 RID: 49
-		// (get) Token: 0x060000D3 RID: 211 RVA: 0x00005173 File Offset: 0x00003373
 		public byte ByteValue
 		{
 			get
@@ -153,9 +121,6 @@ namespace fNbt
 				throw new InvalidCastException("Cannot get ByteValue from " + NbtTag.GetCanonicalTagName(this.TagType));
 			}
 		}
-
-		// Token: 0x17000032 RID: 50
-		// (get) Token: 0x060000D4 RID: 212 RVA: 0x000051A4 File Offset: 0x000033A4
 		public short ShortValue
 		{
 			get
@@ -171,9 +136,6 @@ namespace fNbt
 				}
 			}
 		}
-
-		// Token: 0x17000033 RID: 51
-		// (get) Token: 0x060000D5 RID: 213 RVA: 0x000051FC File Offset: 0x000033FC
 		public int IntValue
 		{
 			get
@@ -191,9 +153,6 @@ namespace fNbt
 				}
 			}
 		}
-
-		// Token: 0x17000034 RID: 52
-		// (get) Token: 0x060000D6 RID: 214 RVA: 0x00005264 File Offset: 0x00003464
 		public long LongValue
 		{
 			get
@@ -213,9 +172,6 @@ namespace fNbt
 				}
 			}
 		}
-
-		// Token: 0x17000035 RID: 53
-		// (get) Token: 0x060000D7 RID: 215 RVA: 0x000052E0 File Offset: 0x000034E0
 		public float FloatValue
 		{
 			get
@@ -239,9 +195,6 @@ namespace fNbt
 				}
 			}
 		}
-
-		// Token: 0x17000036 RID: 54
-		// (get) Token: 0x060000D8 RID: 216 RVA: 0x00005380 File Offset: 0x00003580
 		public double DoubleValue
 		{
 			get
@@ -265,9 +218,6 @@ namespace fNbt
 				}
 			}
 		}
-
-		// Token: 0x17000037 RID: 55
-		// (get) Token: 0x060000D9 RID: 217 RVA: 0x0000541D File Offset: 0x0000361D
 		public byte[] ByteArrayValue
 		{
 			get
@@ -279,9 +229,6 @@ namespace fNbt
 				throw new InvalidCastException("Cannot get ByteArrayValue from " + NbtTag.GetCanonicalTagName(this.TagType));
 			}
 		}
-
-		// Token: 0x17000038 RID: 56
-		// (get) Token: 0x060000DA RID: 218 RVA: 0x0000544E File Offset: 0x0000364E
 		public int[] IntArrayValue
 		{
 			get
@@ -293,9 +240,6 @@ namespace fNbt
 				throw new InvalidCastException("Cannot get IntArrayValue from " + NbtTag.GetCanonicalTagName(this.TagType));
 			}
 		}
-
-		// Token: 0x17000039 RID: 57
-		// (get) Token: 0x060000DB RID: 219 RVA: 0x00005480 File Offset: 0x00003680
 		public string StringValue
 		{
 			get
@@ -320,8 +264,6 @@ namespace fNbt
 				throw new InvalidCastException("Cannot get StringValue from " + NbtTag.GetCanonicalTagName(this.TagType));
 			}
 		}
-
-		// Token: 0x060000DC RID: 220 RVA: 0x00005580 File Offset: 0x00003780
 		[CanBeNull]
 		public static string GetCanonicalTagName(NbtTagType type)
 		{
@@ -355,17 +297,11 @@ namespace fNbt
 				return null;
 			}
 		}
-
-		// Token: 0x060000DD RID: 221 RVA: 0x00005610 File Offset: 0x00003810
 		public override string ToString()
 		{
 			return this.ToString(NbtTag.DefaultIndentString);
 		}
-
-		// Token: 0x060000DE RID: 222
 		public abstract object Clone();
-
-		// Token: 0x060000DF RID: 223 RVA: 0x00005620 File Offset: 0x00003820
 		[NotNull]
 		public string ToString([NotNull] string indentString)
 		{
@@ -377,13 +313,7 @@ namespace fNbt
 			this.PrettyPrint(stringBuilder, indentString, 0);
 			return stringBuilder.ToString();
 		}
-
-		// Token: 0x060000E0 RID: 224
 		internal abstract void PrettyPrint([NotNull] StringBuilder sb, [NotNull] string indentString, int indentLevel);
-
-		// Token: 0x1700003A RID: 58
-		// (get) Token: 0x060000E1 RID: 225 RVA: 0x00005650 File Offset: 0x00003850
-		// (set) Token: 0x060000E2 RID: 226 RVA: 0x00005657 File Offset: 0x00003857
 		[NotNull]
 		public static string DefaultIndentString
 		{
@@ -400,11 +330,7 @@ namespace fNbt
 				NbtTag.defaultIndentString = value;
 			}
 		}
-
-		// Token: 0x04000066 RID: 102
 		protected string name;
-
-		// Token: 0x04000067 RID: 103
 		private static string defaultIndentString = "  ";
 	}
 }

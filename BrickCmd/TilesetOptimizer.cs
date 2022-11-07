@@ -8,10 +8,8 @@ using TiledSharp;
 
 namespace VEMC
 {
-	// Token: 0x0200003E RID: 62
 	internal class TilesetOptimizer
 	{
-		// Token: 0x0600023A RID: 570 RVA: 0x0000A0C8 File Offset: 0x000082C8
 		public static OptimizedTileset Optimize(TmxTileset tset)
 		{
 			OptimizedTileset optimizedTileset = new OptimizedTileset();
@@ -43,7 +41,6 @@ namespace VEMC
 							int num4 = k * x + l;
 							if (num4 < array.Length)
 							{
-							//	Console.WriteLine($"{num4}");
 								array2[num3] = array[num4];
 							}
 							num3++;
@@ -97,8 +94,6 @@ namespace VEMC
 			}
 			throw new InvalidOperationException(string.Format("The tileset is too large to be stored in a {0}x{0} pixel image.", TilesetOptimizer.TILESET_SIZES[TilesetOptimizer.TILESET_SIZES.Length - 1]));
 		}
-
-		// Token: 0x0600023B RID: 571 RVA: 0x0000A358 File Offset: 0x00008558
 		private static Point LoadImage(string file, TmxColor transColor, out List<Color> colors, out byte[] pixelcols)
 		{
 			Bitmap bitmap = new Bitmap(file);
@@ -140,11 +135,7 @@ namespace VEMC
 			}
 			throw new MapBuildException("Tileset image is not 32bppARGB, but it should be at this point. Tell Dave about this.");
 		}
-
-		// Token: 0x040000C8 RID: 200
 		private const int TILE_SIZE = 8;
-
-		// Token: 0x040000C9 RID: 201
 		private static readonly int[] TILESET_SIZES = new int[]
 		{
 			32,

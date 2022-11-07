@@ -5,10 +5,8 @@ using System.Reflection;
 
 namespace VEMC
 {
-	// Token: 0x0200006D RID: 109
 	internal class Program
 	{
-		// Token: 0x060003F0 RID: 1008 RVA: 0x00019808 File Offset: 0x00017A08
 		private static void Main(string[] args)
 		{
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -52,8 +50,6 @@ namespace VEMC
 			}
 			Program.Process(args);
 		}
-
-		// Token: 0x060003F1 RID: 1009 RVA: 0x0001995C File Offset: 0x00017B5C
 		private static void Process(string[] files)
 		{
 			float num = (float)files.Length;
@@ -141,8 +137,6 @@ namespace VEMC
 
 			}
 		}
-
-		// Token: 0x060003F2 RID: 1010 RVA: 0x00019BB8 File Offset: 0x00017DB8
 		private static string DetermineMode(int mode)
 		{
 			switch (mode)

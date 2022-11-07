@@ -5,10 +5,8 @@ using TiledSharp;
 
 namespace VEMC
 {
-	// Token: 0x02000039 RID: 57
 	internal class TileGrouper
 	{
-		// Token: 0x0600022B RID: 555 RVA: 0x00009282 File Offset: 0x00007482
 		public TileGrouper(TmxMap map)
 		{
 			this.map = map;
@@ -16,8 +14,6 @@ namespace VEMC
 			this.offsets = new Dictionary<int, Point>();
 			this.animations = new List<TileGrouper.TileAnimation>();
 		}
-
-		// Token: 0x0600022C RID: 556 RVA: 0x000092BC File Offset: 0x000074BC
 		public List<TileGroup> FindGroups()
 		{
 			List<TileGroup> list = new List<TileGroup>();
@@ -29,8 +25,6 @@ namespace VEMC
 			}
 			return list;
 		}
-
-		// Token: 0x0600022D RID: 557 RVA: 0x0000932C File Offset: 0x0000752C
 		private Dictionary<int, Point> GetGroupOffsets()
 		{
 			Dictionary<int, Point> dictionary = new Dictionary<int, Point>();
@@ -66,8 +60,6 @@ namespace VEMC
 			}
 			return dictionary;
 		}
-
-		// Token: 0x0600022E RID: 558 RVA: 0x000093F4 File Offset: 0x000075F4
 		private uint GetTileModifier(TmxLayerTile tile)
 		{
 			uint num = 0U;
@@ -91,8 +83,6 @@ namespace VEMC
 			}
 			return num;
 		}
-
-		// Token: 0x0600022F RID: 559 RVA: 0x00009470 File Offset: 0x00007670
 		public List<TileGroup> FindGroupsInLayer(TmxLayer layer)
 		{
 			List<TmxLayerTile> tiles = layer.Tiles;
@@ -180,8 +170,6 @@ namespace VEMC
 			list.AddRange(collection);
 			return list;
 		}
-
-		// Token: 0x06000230 RID: 560 RVA: 0x000097EC File Offset: 0x000079EC
 		private List<TileGroup> SliceTileLayer(ref TileGrouper.TileData[,] tiles, int layerDepth)
 		{
 			List<TileGroup> list = new List<TileGroup>();
@@ -230,8 +218,6 @@ namespace VEMC
 			}
 			return list;
 		}
-
-		// Token: 0x06000231 RID: 561 RVA: 0x00009960 File Offset: 0x00007B60
 		private TileGroup FloodFillGroupGet(ref TileGrouper.TileData[,] tiles, int x, int y, int groupid)
 		{
 			List<TileGrouper.TileData> list = new List<TileGrouper.TileData>();
@@ -279,8 +265,6 @@ namespace VEMC
 				height = num10
 			};
 		}
-
-		// Token: 0x06000232 RID: 562 RVA: 0x00009AFC File Offset: 0x00007CFC
 		private void FloodFillStep(ref TileGrouper.TileData[,] tiles, int x, int y, int groupid, ref List<TileGrouper.TileData> group)
 		{
 			if (this.PointInBounds(x, y) && tiles[x, y].groupid == groupid && !tiles[x, y].ignore)
@@ -311,75 +295,33 @@ namespace VEMC
 				return;
 			}
 		}
-
-		// Token: 0x06000233 RID: 563 RVA: 0x00009BD5 File Offset: 0x00007DD5
 		private bool PointInBounds(int x, int y)
 		{
 			return x >= 0 && y >= 0 && x < this.map.Width && y < this.map.Height;
 		}
-
-		// Token: 0x040000B3 RID: 179
 		private const int CHUNK_WIDTH = 320;
-
-		// Token: 0x040000B4 RID: 180
 		private const int CHUNK_HEIGHT = 180;
-
-		// Token: 0x040000B5 RID: 181
 		private const int TILE_WIDTH = 8;
-
-		// Token: 0x040000B6 RID: 182
 		private const int TILE_HEIGHT = 8;
-
-		// Token: 0x040000B7 RID: 183
 		private TmxMap map;
-
-		// Token: 0x040000B8 RID: 184
 		private TmxTileset tileset;
-
-		// Token: 0x040000B9 RID: 185
 		private Dictionary<int, Point> offsets;
-
-		// Token: 0x040000BA RID: 186
 		private List<TileGrouper.TileAnimation> animations;
-
-		// Token: 0x0200003A RID: 58
 		public struct TileAnimation
 		{
-			// Token: 0x040000BB RID: 187
 			public ushort id;
-
-			// Token: 0x040000BC RID: 188
 			public float speed;
-
-			// Token: 0x040000BD RID: 189
 			public int[] indexes;
 		}
-
-		// Token: 0x0200003B RID: 59
 		public struct TileData
 		{
-			// Token: 0x040000BE RID: 190
 			public TmxLayerTile tile;
-
-			// Token: 0x040000BF RID: 191
 			public int groupid;
-
-			// Token: 0x040000C0 RID: 192
 			public bool left;
-
-			// Token: 0x040000C1 RID: 193
 			public bool top;
-
-			// Token: 0x040000C2 RID: 194
 			public bool right;
-
-			// Token: 0x040000C3 RID: 195
 			public bool bottom;
-
-			// Token: 0x040000C4 RID: 196
 			public bool ignore;
-
-			// Token: 0x040000C5 RID: 197
 			public uint modifier;
 		}
 	}

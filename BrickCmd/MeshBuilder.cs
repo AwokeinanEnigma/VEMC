@@ -1,8 +1,4 @@
 ﻿// Decompiled with JetBrains decompiler
-// Type: VEMC.MeshBuilder
-// Assembly: VEMC, Version=3.5.2.0, Culture=neutral, PublicKeyToken=null
-// MVID: D31E32F7-EF00-4E54-8BC6-F1DFA3DF5B6D
-// Assembly location: C:\Users\Tom\Documents\Mother4RestoredENIGMA_COPY\Mother4\bin\Debug\Brickroad.exe
 
 using ClipperLib;
 using LibTessDotNet;
@@ -131,8 +127,6 @@ namespace VEMC
                             while (enumerator2.MoveNext())
                             {
                                 IntPoint current2 = enumerator2.Current;
-                                //IntPoint.op_Inequality(intPoint1, current2)
-                                //i think this is roughly intPoint 1 != current2
                                 if (intPoint1 != current2)
                                 {
                                     Point pt2 = new Point((int)current2.X, (int)current2.Y);
