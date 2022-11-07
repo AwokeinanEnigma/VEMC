@@ -12,41 +12,29 @@ namespace VEMC.Parts
         protected NbtTag tag;
         protected string name;
 
-        public NbtTag Tag
-        {
-            get
-            {
-                return this.tag;
-            }
-        }
+        public NbtTag Tag => tag;
 
-        public ICollection<NbtTag> Tags
-        {
-            get
-            {
-                return this.tag as ICollection<NbtTag>;
-            }
-        }
+        public ICollection<NbtTag> Tags => tag as ICollection<NbtTag>;
 
         public MapPart(string name, bool isList)
         {
-            this.Init(name, isList);
+            Init(name, isList);
         }
 
         public MapPart(string name)
         {
-            this.Init(name, false);
+            Init(name, false);
         }
 
         public MapPart(bool isList)
         {
-            this.Init((string)null, isList);
+            Init(null, isList);
         }
 
         private void Init(string name, bool isList)
         {
             this.name = name;
-            this.tag = isList ? (NbtTag)new NbtList(this.name, NbtTagType.Compound) : (NbtTag)new NbtCompound(this.name);
+            tag = isList ? new NbtList(this.name, NbtTagType.Compound) : (NbtTag)new NbtCompound(this.name);
         }
 
         public void AddFromDictionary<T>(
@@ -54,7 +42,7 @@ namespace VEMC.Parts
           Dictionary<string, string> dictionary,
           string key)
         {
-            this.AddFromDictionary<T>(name, dictionary, key, default(T));
+            AddFromDictionary<T>(name, dictionary, key, default(T));
         }
 
         public void AddFromDictionary<T>(
@@ -64,79 +52,92 @@ namespace VEMC.Parts
           T defValue)
         {
             if (dictionary == null)
+            {
                 throw new ArgumentNullException(nameof(dictionary));
-            string text = (string)null;
+            }
+
             T obj;
-            if (dictionary.TryGetValue(key, out text))
+            if (dictionary.TryGetValue(key, out string text))
             {
                 try
                 {
                     obj = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(text);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     obj = defValue;
                 }
             }
             else
+            {
                 obj = defValue;
-            if ((object)defValue == null && (object)obj == null)
+            }
+
+            if (defValue == null && obj == null)
+            {
                 throw new MapPartRequirementException(this.name, key);
-            this.Add(name, (object)obj);
+            }
+
+            Add(name, obj);
         }
 
         public void Add(string name, object value)
         {
-            if (this.tag is NbtCompound)
+            if (tag is NbtCompound)
             {
                 Type type = value.GetType();
                 NbtTag newTag;
                 switch (value)
                 {
                     case long num:
-                        newTag = (NbtTag)new NbtLong(name, num);
+                        newTag = new NbtLong(name, num);
                         break;
                     case int num:
-                        newTag = (NbtTag)new NbtInt(name, num);
+                        newTag = new NbtInt(name, num);
                         break;
                     case short num:
-                        newTag = (NbtTag)new NbtShort(name, num);
+                        newTag = new NbtShort(name, num);
                         break;
                     case byte num:
-                        newTag = (NbtTag)new NbtByte(name, num);
+                        newTag = new NbtByte(name, num);
                         break;
                     case float num:
-                        newTag = (NbtTag)new NbtFloat(name, num);
+                        newTag = new NbtFloat(name, num);
                         break;
                     case double num:
-                        newTag = (NbtTag)new NbtDouble(name, num);
+                        newTag = new NbtDouble(name, num);
                         break;
                     case string _:
-                        newTag = (NbtTag)new NbtString(name, (string)value);
+                        newTag = new NbtString(name, (string)value);
                         break;
                     case int[] _:
-                        newTag = (NbtTag)new NbtIntArray(name, (int[])value);
+                        newTag = new NbtIntArray(name, (int[])value);
                         break;
                     case byte[] _:
-                        newTag = (NbtTag)new NbtByteArray(name, (byte[])value);
+                        newTag = new NbtByteArray(name, (byte[])value);
                         break;
                     case bool flag:
                         byte num1 = flag ? (byte)1 : (byte)0;
-                        newTag = (NbtTag)new NbtByte(name, num1);
+                        newTag = new NbtByte(name, num1);
                         break;
                     default:
                         throw new MapPartParameterException(this.name, name, type);
                 }
-              ((NbtCompound)this.tag).Add(newTag);
+              ((NbtCompound)tag).Add(newTag);
             }
-            else if (this.tag is NbtList)
+            else if (tag is NbtList)
+            {
                 throw new InvalidOperationException("Only compound tags can be added to list MapParts");
+            }
         }
 
         public void Add(NbtTag tag)
         {
             if (tag == null)
+            {
                 return;
+            }
+
             if (this.tag is NbtCompound)
             {
                 ((NbtCompound)this.tag).Add(tag);
@@ -144,24 +145,29 @@ namespace VEMC.Parts
             else
             {
                 if (!(this.tag is NbtList) || !(tag is NbtCompound))
+                {
                     throw new InvalidOperationException("Only compound tags can be added to list MapParts");
-                ((NbtList)this.tag).Add(tag);
+                } ((NbtList)this.tag).Add(tag);
             }
         }
 
         public void Add(MapPart part)
         {
             if (part == null)
-                return;
-            if (this.tag is NbtCompound)
             {
-                ((NbtCompound)this.tag).Add(part.tag);
+                return;
+            }
+
+            if (tag is NbtCompound)
+            {
+                ((NbtCompound)tag).Add(part.tag);
             }
             else
             {
-                if (!(this.tag is NbtList) || !(part.tag is NbtCompound))
+                if (!(tag is NbtList) || !(part.tag is NbtCompound))
+                {
                     throw new InvalidOperationException("Only compound tags can be added to list MapParts");
-                ((NbtList)this.tag).Add(part.tag);
+                } ((NbtList)tag).Add(part.tag);
             }
         }
     }

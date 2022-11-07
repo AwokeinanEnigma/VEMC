@@ -10,27 +10,15 @@ namespace VEMC
 {
     internal class MeshBuilder
     {
-        private List<List<IntPoint>> solution;
+        private readonly List<List<IntPoint>> solution;
 
-        public List<List<IntPoint>> Solution
-        {
-            get
-            {
-                return this.solution;
-            }
-        }
+        public List<List<IntPoint>> Solution => solution;
 
-        public int PathCount
-        {
-            get
-            {
-                return this.solution.Count;
-            }
-        }
+        public int PathCount => solution.Count;
 
         public MeshBuilder()
         {
-            this.solution = new List<List<IntPoint>>();
+            solution = new List<List<IntPoint>>();
         }
 
         public void AddPath(int x, int y, Point[] points)
@@ -40,37 +28,39 @@ namespace VEMC
             for (int i = 0; i < num; i++)
             {
                 IntPoint item;
-                
-                item = new IntPoint((long)(x + points[i].X), (long)(y + points[i].Y));
+
+                item = new IntPoint(x + points[i].X, y + points[i].Y);
                 list.Add(item);
             }
-            this.AddPath(list);
+            AddPath(list);
         }
 
         public void AddPath(IntPoint[] points)
         {
             List<IntPoint> path = new List<IntPoint>();
-            path.AddRange((IEnumerable<IntPoint>)points);
-            this.AddPath(path);
+            path.AddRange(points);
+            AddPath(path);
         }
 
         public void AddPath(List<IntPoint> path)
         {
-            List<List<IntPoint>> intPointListList = new List<List<IntPoint>>();
-            intPointListList.Add(path);
+            List<List<IntPoint>> intPointListList = new List<List<IntPoint>>
+            {
+                path
+            };
             Clipper clipper = new Clipper(0);
-            ((ClipperBase)clipper).AddPaths(this.solution, (PolyType)0, true);
-            ((ClipperBase)clipper).AddPaths(intPointListList, (PolyType)1, true);
-            clipper.Execute((ClipType)1, this.solution);
+            clipper.AddPaths(solution, 0, true);
+            clipper.AddPaths(intPointListList, (PolyType)1, true);
+            clipper.Execute((ClipType)1, solution);
         }
 
         public void Simplify()
         {
             Tess tess = new Tess();
-            int count = this.solution.Count;
+            int count = solution.Count;
             for (int i = 0; i < count; i++)
             {
-                List<IntPoint> list = this.solution[i];
+                List<IntPoint> list = solution[i];
                 int count2 = list.Count;
                 ContourVertex[] array = new ContourVertex[count2];
                 for (int j = 0; j < count2; j++)
@@ -79,43 +69,54 @@ namespace VEMC
                     int num = j;
                     ContourVertex contourVertex = default(ContourVertex);
                     Vec3 position = default(Vec3);
-                    position.X = (float)list[j].X;
-                    position.Y = (float)list[j].Y;
+                    position.X = list[j].X;
+                    position.Y = list[j].Y;
                     contourVertex.Position = position;
                     array2[num] = contourVertex;
                 }
                 tess.AddContour(array);
             }
             tess.Tessellate((WindingRule)2, 0, 3);
-            this.solution.Clear();
+            solution.Clear();
             int elementCount = tess.ElementCount;
             for (int k = 0; k < elementCount; k++)
             {
                 Vec3 position2 = tess.Vertices[tess.Elements[k * 3]].Position;
                 Vec3 position3 = tess.Vertices[tess.Elements[k * 3 + 1]].Position;
                 Vec3 position4 = tess.Vertices[tess.Elements[k * 3 + 2]].Position;
-                List<IntPoint> list2 = new List<IntPoint>();
-                list2.Add(new IntPoint((double)position2.X, (double)position2.Y));
-                list2.Add(new IntPoint((double)position3.X, (double)position3.Y));
-                list2.Add(new IntPoint((double)position4.X, (double)position4.Y));
-                this.solution.Add(list2);
+                List<IntPoint> list2 = new List<IntPoint>
+                {
+                    new IntPoint(position2.X, position2.Y),
+                    new IntPoint(position3.X, position3.Y),
+                    new IntPoint(position4.X, position4.Y)
+                };
+                solution.Add(list2);
             }
         }
 
 
         public void DebugDraw(int w, int h)
         {
-            if (this.solution.Count == 0)
+            if (solution.Count == 0)
+            {
                 return;
+            }
+
             Bitmap bitmap = new Bitmap(w, h);
-            using (Graphics graphics = Graphics.FromImage((Image)bitmap))
+            using (Graphics graphics = Graphics.FromImage(bitmap))
             {
                 graphics.Clear(Color.White);
                 for (int index = 0; index < w; index += 320)
+                {
                     graphics.DrawLine(Pens.LightGray, index, 0, index, h);
+                }
+
                 for (int index = 0; index < h; index += 180)
+                {
                     graphics.DrawLine(Pens.LightGray, 0, index, w, index);
-                using (List<List<IntPoint>>.Enumerator enumerator1 = this.solution.GetEnumerator())
+                }
+
+                using (List<List<IntPoint>>.Enumerator enumerator1 = solution.GetEnumerator())
                 {
                     while (enumerator1.MoveNext())
                     {

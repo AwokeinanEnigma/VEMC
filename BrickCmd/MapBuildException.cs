@@ -2,10 +2,10 @@
 
 namespace VEMC
 {
-	internal class MapBuildException : Exception
-	{
-		public MapBuildException(string message) : base(message)
-		{
-		}
-	}
+    internal class MapBuildException : Exception
+    {
+        public MapBuildException(string message) : base(message)
+        {
+        }
+    }
 }

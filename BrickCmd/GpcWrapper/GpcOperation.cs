@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace GpcWrapper
+﻿namespace GpcWrapper
 {
-	public enum GpcOperation
-	{
-		Difference,
-		Intersection,
-		XOr,
-		Union
-	}
+    public enum GpcOperation
+    {
+        Difference,
+        Intersection,
+        XOr,
+        Union
+    }
 }

@@ -15,10 +15,10 @@ namespace VEMC
             NbtCompound rootTag = nbtFile.RootTag;
             rootTag.Name = tmxTileset.Name;
             int width = optTileset.Width;
-            rootTag.Add((NbtTag)new NbtInt("w", width));
-            rootTag.Add((NbtTag)new NbtByteArray("img", optTileset.IndexedImage));
-            rootTag.Add((NbtTag)TilesetDatBuilder.CreatePaletteTag(optTileset.Palette));
-            rootTag.Add((NbtTag)TilesetDatBuilder.CreateAnimationTag(tmxTileset, optTileset));
+            rootTag.Add(new NbtInt("w", width));
+            rootTag.Add(new NbtByteArray("img", optTileset.IndexedImage));
+            rootTag.Add(TilesetDatBuilder.CreatePaletteTag(optTileset.Palette));
+            rootTag.Add(TilesetDatBuilder.CreateAnimationTag(tmxTileset, optTileset));
             return nbtFile;
         }
 
@@ -26,8 +26,11 @@ namespace VEMC
         {
             int[] numArray = new int[colors.Length];
             for (int index = 0; index < numArray.Length; ++index)
+            {
                 numArray[index] = colors[index].ToArgb();
-            return new NbtList("pal", (IEnumerable<NbtTag>)new List<NbtIntArray>()
+            }
+
+            return new NbtList("pal", new List<NbtIntArray>()
       {
         new NbtIntArray(numArray)
       }, NbtTagType.IntArray);
@@ -63,10 +66,10 @@ namespace VEMC
                     if (!flag)
                     {
                         tile.Properties.Add("actualid", num1.ToString());
-                        nbtCompound.Add((NbtTag)new NbtCompound(num1.ToString())
+                        nbtCompound.Add(new NbtCompound(num1.ToString())
             {
-              (NbtTag) new NbtIntArray("d", numArray),
-              (NbtTag) new NbtList("spd", (IEnumerable<NbtTag>) new List<NbtFloat>()
+               new NbtIntArray("d", numArray),
+               new NbtList("spd",  new List<NbtFloat>()
               {
                 new NbtFloat(num5)
               })

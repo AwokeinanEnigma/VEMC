@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace VEMC
+﻿namespace VEMC
 {
-	public class PolyBuilder
-	{
-	}
+    public class PolyBuilder
+    {
+    }
 }

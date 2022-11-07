@@ -14,58 +14,58 @@ namespace fNbt
         private readonly List<NbtTag> tags = new List<NbtTag>();
         private NbtTagType listType;
 
-        public override NbtTagType TagType
-        {
-            get
-            {
-                return NbtTagType.List;
-            }
-        }
+        public override NbtTagType TagType => NbtTagType.List;
 
         public NbtTagType ListType
         {
-            get
-            {
-                return this.listType;
-            }
+            get => listType;
             set
             {
                 if (value == NbtTagType.End)
                 {
-                    if (this.tags.Count > 0)
+                    if (tags.Count > 0)
+                    {
                         throw new ArgumentException("Only empty list tags may have TagType of End.");
+                    }
                 }
                 else if (value < NbtTagType.Byte || value > NbtTagType.IntArray && value != NbtTagType.Unknown)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-                if (this.tags.Count > 0)
                 {
-                    NbtTagType tagType = this.tags[0].TagType;
-                    if (tagType != value)
-                        throw new ArgumentException(string.Format("Given NbtTagType ({0}) does not match actual element type ({1})", (object)value, (object)tagType));
+                    throw new ArgumentOutOfRangeException(nameof(value));
                 }
-                this.listType = value;
+
+                if (tags.Count > 0)
+                {
+                    NbtTagType tagType = tags[0].TagType;
+                    if (tagType != value)
+                    {
+                        throw new ArgumentException(string.Format("Given NbtTagType ({0}) does not match actual element type ({1})", value, tagType));
+                    }
+                }
+                listType = value;
             }
         }
 
         public NbtList()
-          : this((string)null, (IEnumerable<NbtTag>)null, NbtTagType.Unknown)
+          : this(null, null, NbtTagType.Unknown)
         {
         }
 
         public NbtList([CanBeNull] string tagName)
-          : this(tagName, (IEnumerable<NbtTag>)null, NbtTagType.Unknown)
+          : this(tagName, null, NbtTagType.Unknown)
         {
         }
 
         public NbtList([NotNull] IEnumerable<NbtTag> tags)
-          : this((string)null, tags, NbtTagType.Unknown)
+          : this(null, tags, NbtTagType.Unknown)
         {
             if (tags == null)
+            {
                 throw new ArgumentNullException(nameof(tags));
+            }
         }
 
         public NbtList(NbtTagType givenListType)
-          : this((string)null, (IEnumerable<NbtTag>)null, givenListType)
+          : this(null, null, givenListType)
         {
         }
 
@@ -73,29 +73,38 @@ namespace fNbt
           : this(tagName, tags, NbtTagType.Unknown)
         {
             if (tags == null)
+            {
                 throw new ArgumentNullException(nameof(tags));
+            }
         }
 
         public NbtList([NotNull] IEnumerable<NbtTag> tags, NbtTagType givenListType)
-          : this((string)null, tags, givenListType)
+          : this(null, tags, givenListType)
         {
             if (tags == null)
+            {
                 throw new ArgumentNullException(nameof(tags));
+            }
         }
 
         public NbtList([CanBeNull] string tagName, NbtTagType givenListType)
-          : this(tagName, (IEnumerable<NbtTag>)null, givenListType)
+          : this(tagName, null, givenListType)
         {
         }
 
         public NbtList([CanBeNull] string tagName, [CanBeNull] IEnumerable<NbtTag> tags, NbtTagType givenListType)
         {
-            this.name = tagName;
-            this.ListType = givenListType;
+            name = tagName;
+            ListType = givenListType;
             if (tags == null)
+            {
                 return;
+            }
+
             foreach (NbtTag tag in tags)
-                this.Add(tag);
+            {
+                Add(tag);
+            }
         }
 
         public NbtList([NotNull] NbtList other)
@@ -104,33 +113,47 @@ namespace fNbt
             {
                 throw new ArgumentNullException(nameof(other));
             }
-            this.name = other.name;
-            this.listType = other.listType;
+            name = other.name;
+            listType = other.listType;
             foreach (NbtTag tag in other.tags)
-                this.tags.Add((NbtTag)tag.Clone());
+            {
+                tags.Add((NbtTag)tag.Clone());
+            }
         }
 
         [NotNull]
         public override NbtTag this[int tagIndex]
         {
-            get
-            {
-                return this.tags[tagIndex];
-            }
+            get => tags[tagIndex];
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
+
                 if (value.Parent != null)
+                {
                     throw new ArgumentException("A tag may only be added to one compound/list at a time.");
-                if (value == this || value == this.Parent)
+                }
+
+                if (value == this || value == Parent)
+                {
                     throw new ArgumentException("A list tag may not be added to itself or to its child tag.");
+                }
+
                 if (value.Name != null)
+                {
                     throw new ArgumentException("Named tag given. A list may only contain unnamed tags.");
-                if (this.listType != NbtTagType.Unknown && value.TagType != this.listType)
-                    throw new ArgumentException("Items must be of type " + (object)this.listType);
-                this.tags[tagIndex] = value;
-                value.Parent = (NbtTag)this;
+                }
+
+                if (listType != NbtTagType.Unknown && value.TagType != listType)
+                {
+                    throw new ArgumentException("Items must be of type " + listType);
+                }
+
+                tags[tagIndex] = value;
+                value.Parent = this;
             }
         }
 
@@ -138,100 +161,116 @@ namespace fNbt
         [Pure]
         public T Get<T>(int tagIndex) where T : NbtTag
         {
-            return (T)this.tags[tagIndex];
+            return (T)tags[tagIndex];
         }
 
         public void AddRange([NotNull] IEnumerable<NbtTag> newTags)
         {
             if (newTags == null)
+            {
                 throw new ArgumentNullException(nameof(newTags));
+            }
+
             foreach (NbtTag newTag in newTags)
-                this.Add(newTag);
+            {
+                Add(newTag);
+            }
         }
 
         [Pure]
         [NotNull]
         public NbtTag[] ToArray()
         {
-            return this.tags.ToArray();
+            return tags.ToArray();
         }
 
         [NotNull]
         [Pure]
         public T[] ToArray<T>() where T : NbtTag
         {
-            T[] objArray = new T[this.tags.Count];
+            T[] objArray = new T[tags.Count];
             for (int index = 0; index < objArray.Length; ++index)
-                objArray[index] = (T)this.tags[index];
+            {
+                objArray[index] = (T)tags[index];
+            }
+
             return objArray;
         }
 
         internal override bool ReadTag(NbtBinaryReader readStream)
         {
-            if (readStream.Selector != null && !readStream.Selector((NbtTag)this))
+            if (readStream.Selector != null && !readStream.Selector(this))
             {
-                this.SkipTag(readStream);
+                SkipTag(readStream);
                 return false;
             }
-            this.ListType = readStream.ReadTagType();
+            ListType = readStream.ReadTagType();
             int num = readStream.ReadInt32();
             if (num < 0)
+            {
                 throw new NbtFormatException("Negative list size given.");
+            }
+
             for (int index = 0; index < num; ++index)
             {
                 NbtTag nbtTag;
-                switch (this.ListType)
+                switch (ListType)
                 {
                     case NbtTagType.Byte:
-                        nbtTag = (NbtTag)new NbtByte();
+                        nbtTag = new NbtByte();
                         break;
                     case NbtTagType.Short:
-                        nbtTag = (NbtTag)new NbtShort();
+                        nbtTag = new NbtShort();
                         break;
                     case NbtTagType.Int:
-                        nbtTag = (NbtTag)new NbtInt();
+                        nbtTag = new NbtInt();
                         break;
                     case NbtTagType.Long:
-                        nbtTag = (NbtTag)new NbtLong();
+                        nbtTag = new NbtLong();
                         break;
                     case NbtTagType.Float:
-                        nbtTag = (NbtTag)new NbtFloat();
+                        nbtTag = new NbtFloat();
                         break;
                     case NbtTagType.Double:
-                        nbtTag = (NbtTag)new NbtDouble();
+                        nbtTag = new NbtDouble();
                         break;
                     case NbtTagType.ByteArray:
-                        nbtTag = (NbtTag)new NbtByteArray();
+                        nbtTag = new NbtByteArray();
                         break;
                     case NbtTagType.String:
-                        nbtTag = (NbtTag)new NbtString();
+                        nbtTag = new NbtString();
                         break;
                     case NbtTagType.List:
-                        nbtTag = (NbtTag)new NbtList();
+                        nbtTag = new NbtList();
                         break;
                     case NbtTagType.Compound:
-                        nbtTag = (NbtTag)new NbtCompound();
+                        nbtTag = new NbtCompound();
                         break;
                     case NbtTagType.IntArray:
-                        nbtTag = (NbtTag)new NbtIntArray();
+                        nbtTag = new NbtIntArray();
                         break;
                     default:
-                        throw new NbtFormatException("Unsupported tag type found in a list: " + (object)this.ListType);
+                        throw new NbtFormatException("Unsupported tag type found in a list: " + ListType);
                 }
-                nbtTag.Parent = (NbtTag)this;
+                nbtTag.Parent = this;
                 if (nbtTag.ReadTag(readStream))
-                    this.tags.Add(nbtTag);
+                {
+                    tags.Add(nbtTag);
+                }
             }
             return true;
         }
 
         internal override void SkipTag(NbtBinaryReader readStream)
         {
-            this.ListType = readStream.ReadTagType();
+            ListType = readStream.ReadTagType();
             int bytesToSkip = readStream.ReadInt32();
             if (bytesToSkip < 0)
+            {
                 throw new NbtFormatException("Negative list size given.");
-            switch (this.ListType)
+            }
+
+            switch (ListType)
             {
                 case NbtTagType.Byte:
                     readStream.Skip(bytesToSkip);
@@ -254,7 +293,7 @@ namespace fNbt
                 default:
                     for (int index = 0; index < bytesToSkip; ++index)
                     {
-                        switch (this.listType)
+                        switch (listType)
                         {
                             case NbtTagType.ByteArray:
                                 new NbtByteArray().SkipTag(readStream);
@@ -280,221 +319,237 @@ namespace fNbt
         internal override void WriteTag(NbtBinaryWriter writeStream)
         {
             writeStream.Write(NbtTagType.List);
-            if (this.Name == null)
+            if (Name == null)
+            {
                 throw new NbtFormatException("Name is null");
-            writeStream.Write(this.Name);
-            this.WriteData(writeStream);
+            }
+
+            writeStream.Write(Name);
+            WriteData(writeStream);
         }
 
         internal override void WriteData(NbtBinaryWriter writeStream)
         {
-            if (this.ListType == NbtTagType.Unknown)
+            if (ListType == NbtTagType.Unknown)
+            {
                 throw new NbtFormatException("NbtList had no elements and an Unknown ListType");
-            writeStream.Write(this.ListType);
-            writeStream.Write(this.tags.Count);
-            foreach (NbtTag tag in this.tags)
+            }
+
+            writeStream.Write(ListType);
+            writeStream.Write(tags.Count);
+            foreach (NbtTag tag in tags)
+            {
                 tag.WriteData(writeStream);
+            }
         }
 
         public IEnumerator<NbtTag> GetEnumerator()
         {
-            return (IEnumerator<NbtTag>)this.tags.GetEnumerator();
+            return tags.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return (IEnumerator)this.tags.GetEnumerator();
+            return tags.GetEnumerator();
         }
 
         public int IndexOf([CanBeNull] NbtTag tag)
         {
-            return tag == null ? -1 : this.tags.IndexOf(tag);
+            return tag == null ? -1 : tags.IndexOf(tag);
         }
 
         public void Insert(int tagIndex, [NotNull] NbtTag newTag)
         {
             if (newTag == null)
+            {
                 throw new ArgumentNullException(nameof(newTag));
-            if (this.listType != NbtTagType.Unknown && newTag.TagType != this.listType)
-                throw new ArgumentException("Items must be of type " + (object)this.listType);
+            }
+
+            if (listType != NbtTagType.Unknown && newTag.TagType != listType)
+            {
+                throw new ArgumentException("Items must be of type " + listType);
+            }
+
             if (newTag.Parent != null)
+            {
                 throw new ArgumentException("A tag may only be added to one compound/list at a time.");
-            this.tags.Insert(tagIndex, newTag);
-            if (this.listType == NbtTagType.Unknown)
-                this.listType = newTag.TagType;
-            newTag.Parent = (NbtTag)this;
+            }
+
+            tags.Insert(tagIndex, newTag);
+            if (listType == NbtTagType.Unknown)
+            {
+                listType = newTag.TagType;
+            }
+
+            newTag.Parent = this;
         }
 
         public void RemoveAt(int index)
         {
             NbtTag nbtTag = this[index];
-            this.tags.RemoveAt(index);
-            nbtTag.Parent = (NbtTag)null;
+            tags.RemoveAt(index);
+            nbtTag.Parent = null;
         }
 
         public void Add([NotNull] NbtTag newTag)
         {
             if (newTag == null)
+            {
                 throw new ArgumentNullException(nameof(newTag));
+            }
+
             if (newTag.Parent != null)
+            {
                 throw new ArgumentException("A tag may only be added to one compound/list at a time.");
-            if (newTag == this || newTag == this.Parent)
+            }
+
+            if (newTag == this || newTag == Parent)
+            {
                 throw new ArgumentException("A list tag may not be added to itself or to its child tag.");
+            }
+
             if (newTag.Name != null)
+            {
                 throw new ArgumentException("Named tag given. A list may only contain unnamed tags.");
-            if (this.listType != NbtTagType.Unknown && newTag.TagType != this.listType)
-                throw new ArgumentException("Items in this list must be of type " + (object)this.listType + ". Given type: " + (object)newTag.TagType);
-            this.tags.Add(newTag);
-            newTag.Parent = (NbtTag)this;
-            if (this.listType != NbtTagType.Unknown)
+            }
+
+            if (listType != NbtTagType.Unknown && newTag.TagType != listType)
+            {
+                throw new ArgumentException("Items in this list must be of type " + listType + ". Given type: " + newTag.TagType);
+            }
+
+            tags.Add(newTag);
+            newTag.Parent = this;
+            if (listType != NbtTagType.Unknown)
+            {
                 return;
-            this.listType = newTag.TagType;
+            }
+
+            listType = newTag.TagType;
         }
 
         public void Clear()
         {
-            for (int index = 0; index < this.tags.Count; ++index)
-                this.tags[index].Parent = (NbtTag)null;
-            this.tags.Clear();
+            for (int index = 0; index < tags.Count; ++index)
+            {
+                tags[index].Parent = null;
+            }
+
+            tags.Clear();
         }
 
         public bool Contains([NotNull] NbtTag item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
-            return this.tags.Contains(item);
+            }
+
+            return tags.Contains(item);
         }
 
         public void CopyTo(NbtTag[] array, int arrayIndex)
         {
-            this.tags.CopyTo(array, arrayIndex);
+            tags.CopyTo(array, arrayIndex);
         }
 
         public bool Remove([NotNull] NbtTag tag)
         {
             if (tag == null)
+            {
                 throw new ArgumentNullException(nameof(tag));
-            if (!this.tags.Remove(tag))
+            }
+
+            if (!tags.Remove(tag))
+            {
                 return false;
-            tag.Parent = (NbtTag)null;
+            }
+
+            tag.Parent = null;
             return true;
         }
 
-        public int Count
-        {
-            get
-            {
-                return this.tags.Count;
-            }
-        }
+        public int Count => tags.Count;
 
-        bool ICollection<NbtTag>.IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool ICollection<NbtTag>.IsReadOnly => false;
 
         void IList.Remove([NotNull] object value)
         {
-            this.Remove((NbtTag)value);
+            Remove((NbtTag)value);
         }
 
         [NotNull]
         object IList.this[int tagIndex]
         {
-            get
-            {
-                return (object)this.tags[tagIndex];
-            }
-            set
-            {
-                this[tagIndex] = (NbtTag)value;
-            }
+            get => tags[tagIndex];
+            set => this[tagIndex] = (NbtTag)value;
         }
 
         int IList.Add([NotNull] object value)
         {
-            this.Add((NbtTag)value);
-            return this.tags.Count - 1;
+            Add((NbtTag)value);
+            return tags.Count - 1;
         }
 
         bool IList.Contains([NotNull] object value)
         {
-            return this.tags.Contains((NbtTag)value);
+            return tags.Contains((NbtTag)value);
         }
 
         int IList.IndexOf([NotNull] object value)
         {
-            return this.tags.IndexOf((NbtTag)value);
+            return tags.IndexOf((NbtTag)value);
         }
 
         void IList.Insert(int index, [NotNull] object value)
         {
-            this.Insert(index, (NbtTag)value);
+            Insert(index, (NbtTag)value);
         }
 
-        bool IList.IsFixedSize
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool IList.IsFixedSize => false;
 
         void ICollection.CopyTo(Array array, int index)
         {
-            this.CopyTo((NbtTag[])array, index);
+            CopyTo((NbtTag[])array, index);
         }
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return ((ICollection)this.tags).SyncRoot;
-            }
-        }
+        object ICollection.SyncRoot => ((ICollection)tags).SyncRoot;
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool ICollection.IsSynchronized => false;
 
-        bool IList.IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool IList.IsReadOnly => false;
 
         public override object Clone()
         {
-            return (object)new NbtList(this);
+            return new NbtList(this);
         }
 
         internal override void PrettyPrint(StringBuilder sb, string indentString, int indentLevel)
         {
             for (int index = 0; index < indentLevel; ++index)
+            {
                 sb.Append(indentString);
+            }
+
             sb.Append("TAG_List");
-            if (!string.IsNullOrEmpty(this.Name))
-                sb.AppendFormat("(\"{0}\")", (object)this.Name);
-            sb.AppendFormat(": {0} entries {{", (object)this.tags.Count);
-            if (this.Count > 0)
+            if (!string.IsNullOrEmpty(Name))
+            {
+                sb.AppendFormat("(\"{0}\")", Name);
+            }
+
+            sb.AppendFormat(": {0} entries {{", tags.Count);
+            if (Count > 0)
             {
                 sb.Append('\n');
-                foreach (NbtTag tag in this.tags)
+                foreach (NbtTag tag in tags)
                 {
                     tag.PrettyPrint(sb, indentString, indentLevel + 1);
                     sb.Append('\n');
                 }
                 for (int index = 0; index < indentLevel; ++index)
+                {
                     sb.Append(indentString);
+                }
             }
             sb.Append('}');
         }

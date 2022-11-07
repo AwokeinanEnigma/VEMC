@@ -12,26 +12,20 @@ namespace fNbt
         [NotNull]
         private int[] ints;
 
-        public override NbtTagType TagType
-        {
-            get
-            {
-                return NbtTagType.IntArray;
-            }
-        }
+        public override NbtTagType TagType => NbtTagType.IntArray;
 
         [NotNull]
         public int[] Value
         {
-            get
-            {
-                return this.ints;
-            }
+            get => ints;
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
-                this.ints = value;
+                }
+
+                ints = value;
             }
         }
 
@@ -41,57 +35,63 @@ namespace fNbt
         }
 
         public NbtIntArray([NotNull] int[] value)
-          : this((string)null, value)
+          : this(null, value)
         {
         }
 
         public NbtIntArray([CanBeNull] string tagName)
         {
-            this.name = tagName;
-            this.ints = NbtIntArray.ZeroArray;
+            name = tagName;
+            ints = NbtIntArray.ZeroArray;
         }
 
         public NbtIntArray([CanBeNull] string tagName, [NotNull] int[] value)
         {
             if (value == null)
+            {
                 throw new ArgumentNullException(nameof(value));
-            this.name = tagName;
-            this.ints = (int[])value.Clone();
+            }
+
+            name = tagName;
+            ints = (int[])value.Clone();
         }
 
         public NbtIntArray([NotNull] NbtIntArray other)
         {
             if (other == null)
+            {
                 throw new ArgumentNullException(nameof(other));
-            this.name = other.name;
-            this.ints = (int[])other.Value.Clone();
+            }
+
+            name = other.name;
+            ints = (int[])other.Value.Clone();
         }
 
         public int this[int tagIndex]
         {
-            get
-            {
-                return this.Value[tagIndex];
-            }
-            set
-            {
-                this.Value[tagIndex] = value;
-            }
+            get => Value[tagIndex];
+            set => Value[tagIndex] = value;
         }
 
         internal override bool ReadTag(NbtBinaryReader readStream)
         {
             int length = readStream.ReadInt32();
             if (length < 0)
+            {
                 throw new NbtFormatException("Negative length given in TAG_Int_Array");
-            if (readStream.Selector != null && !readStream.Selector((NbtTag)this))
+            }
+
+            if (readStream.Selector != null && !readStream.Selector(this))
             {
                 readStream.Skip(length * 4);
                 return false;
             }
-            this.Value = new int[length];
+            Value = new int[length];
             for (int index = 0; index < length; ++index)
-                this.Value[index] = readStream.ReadInt32();
+            {
+                Value[index] = readStream.ReadInt32();
+            }
+
             return true;
         }
 
@@ -99,39 +99,53 @@ namespace fNbt
         {
             int num = readStream.ReadInt32();
             if (num < 0)
+            {
                 throw new NbtFormatException("Negative length given in TAG_Int_Array");
+            }
+
             readStream.Skip(num * 4);
         }
 
         internal override void WriteTag(NbtBinaryWriter writeStream)
         {
             writeStream.Write(NbtTagType.IntArray);
-            if (this.Name == null)
+            if (Name == null)
+            {
                 throw new NbtFormatException("Name is null");
-            writeStream.Write(this.Name);
-            this.WriteData(writeStream);
+            }
+
+            writeStream.Write(Name);
+            WriteData(writeStream);
         }
 
         internal override void WriteData(NbtBinaryWriter writeStream)
         {
-            writeStream.Write(this.Value.Length);
-            for (int index = 0; index < this.Value.Length; ++index)
-                writeStream.Write(this.Value[index]);
+            writeStream.Write(Value.Length);
+            for (int index = 0; index < Value.Length; ++index)
+            {
+                writeStream.Write(Value[index]);
+            }
         }
 
         public override object Clone()
         {
-            return (object)new NbtIntArray(this);
+            return new NbtIntArray(this);
         }
 
         internal override void PrettyPrint(StringBuilder sb, string indentString, int indentLevel)
         {
             for (int index = 0; index < indentLevel; ++index)
+            {
                 sb.Append(indentString);
+            }
+
             sb.Append("TAG_Int_Array");
-            if (!string.IsNullOrEmpty(this.Name))
-                sb.AppendFormat("(\"{0}\")", (object)this.Name);
-            sb.AppendFormat(": [{0} ints]", (object)this.ints.Length);
+            if (!string.IsNullOrEmpty(Name))
+            {
+                sb.AppendFormat("(\"{0}\")", Name);
+            }
+
+            sb.AppendFormat(": [{0} ints]", ints.Length);
         }
     }
 }

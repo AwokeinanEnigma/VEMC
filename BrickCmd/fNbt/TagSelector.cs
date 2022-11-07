@@ -1,7 +1,6 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace fNbt
 {
-	public delegate bool TagSelector([NotNull] NbtTag tag);
+    public delegate bool TagSelector([NotNull] NbtTag tag);
 }

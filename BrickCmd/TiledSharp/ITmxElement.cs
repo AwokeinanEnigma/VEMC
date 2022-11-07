@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace TiledSharp
+﻿namespace TiledSharp
 {
-	public interface ITmxElement
-	{
-		string Name { get; }
-	}
+    public interface ITmxElement
+    {
+        string Name { get; }
+    }
 }

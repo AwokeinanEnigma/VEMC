@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace fNbt
+﻿namespace fNbt
 {
-	public enum NbtCompression
-	{
-		AutoDetect,
-		None,
-		GZip,
-		ZLib
-	}
+    public enum NbtCompression
+    {
+        AutoDetect,
+        None,
+        GZip,
+        ZLib
+    }
 }

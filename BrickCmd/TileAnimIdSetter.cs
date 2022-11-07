@@ -7,20 +7,20 @@ namespace VEMC
 {
     internal class TileAnimIdSetter
     {
-        private TmxTileset tileset;
+        private readonly TmxTileset tileset;
         private IDictionary<int, ushort> animationMap;
 
         public TileAnimIdSetter(TmxTileset tileset)
         {
             this.tileset = tileset;
-            this.BuildAnimationMap();
+            BuildAnimationMap();
         }
 
         private void BuildAnimationMap()
         {
-            this.animationMap = (IDictionary<int, ushort>)new Dictionary<int, ushort>();
+            animationMap = new Dictionary<int, ushort>();
             ushort num1 = 0;
-            foreach (TmxTilesetTile tile in this.tileset.Tiles)
+            foreach (TmxTilesetTile tile in tileset.Tiles)
             {
                 if (tile.Properties.ContainsKey("animid"))
                 {
@@ -28,14 +28,14 @@ namespace VEMC
                     int length = (int)tile.Properties.TryGetDecimal("frames");
                     int num3 = (int)tile.Properties.TryGetDecimal("vFrameSkip");
                     int num4 = (int)tile.Properties.TryGetDecimal("hFrameSkip");
-                    double num5 = (double)(float)tile.Properties.TryGetDecimal("speed");
+                    double num5 = (float)tile.Properties.TryGetDecimal("speed");
                     int[] numArray = new int[length];
-                    int num6 = this.tileset.Image.Width / this.tileset.TileWidth;
+                    int num6 = tileset.Image.Width / tileset.TileWidth;
                     int num7 = tile.Id / num6;
                     bool flag = true;
                     for (int index = 0; index < length; ++index)
                     {
-                        int num8 = this.tileset.FirstGid + tile.Id + index * num4;
+                        int num8 = tileset.FirstGid + tile.Id + index * num4;
                         int num9 = num8 / num6;
                         int num10 = num8 + (num9 - num7) * (num6 * num3);
                         numArray[index] = num10;
@@ -44,7 +44,10 @@ namespace VEMC
                     if (!flag)
                     {
                         for (int index = 0; index < numArray.Length; ++index)
-                            this.animationMap.Add(numArray[index], num1);
+                        {
+                            animationMap.Add(numArray[index], num1);
+                        }
+
                         ++num1;
                     }
                 }
@@ -57,8 +60,7 @@ namespace VEMC
             {
                 if (tileInts[index] > 0U)
                 {
-                    ushort num = 0;
-                    this.animationMap.TryGetValue((int)tileInts[index], out num);
+                    animationMap.TryGetValue((int)tileInts[index], out ushort num);
                     tileInts[index] = (uint)num << 19 | tileInts[index];
                 }
             }

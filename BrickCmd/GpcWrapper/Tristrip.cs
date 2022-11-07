@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace GpcWrapper
+﻿namespace GpcWrapper
 {
-	public class Tristrip
-	{
-		public int NofStrips;
-		public VertexList[] Strip;
-	}
+    public class Tristrip
+    {
+        public int NofStrips;
+        public VertexList[] Strip;
+    }
 }
