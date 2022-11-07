@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{021C7C3B-0E16-4A29-BCE8-0725AFAE0E5B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VEMC</RootNamespace>
+    <AssemblyName>VEMC</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>violet.ico</ApplicationIcon>
+    <StartupObject>VEMC.Program</StartupObject>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PLATFORM_X86</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="clipper_library">
+      <HintPath>.\clipper_library.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zlib, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ionic.Zlib.1.9.1.5\lib\Ionic.Zlib.dll</HintPath>
+    </Reference>
+    <Reference Include="LibTessDotNet">
+      <HintPath>.\LibTessDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="fNbt\ByteCountingStream.cs" />
+    <Compile Include="fNbt\InvalidReaderStateException.cs" />
+    <Compile Include="fNbt\NbtBinaryReader.cs" />
+    <Compile Include="fNbt\NbtBinaryWriter.cs" />
+    <Compile Include="fNbt\NbtByte.cs" />
+    <Compile Include="fNbt\NbtByteArray.cs" />
+    <Compile Include="fNbt\NbtCompound.cs" />
+    <Compile Include="fNbt\NbtCompression.cs" />
+    <Compile Include="fNbt\NbtDouble.cs" />
+    <Compile Include="fNbt\NbtFile.cs" />
+    <Compile Include="fNbt\NbtFloat.cs" />
+    <Compile Include="fNbt\NbtFormatException.cs" />
+    <Compile Include="fNbt\NbtInt.cs" />
+    <Compile Include="fNbt\NbtIntArray.cs" />
+    <Compile Include="fNbt\NbtList.cs" />
+    <Compile Include="fNbt\NbtLong.cs" />
+    <Compile Include="fNbt\NbtParseState.cs" />
+    <Compile Include="fNbt\NbtReader.cs" />
+    <Compile Include="fNbt\NbtReaderNode.cs" />
+    <Compile Include="fNbt\NbtShort.cs" />
+    <Compile Include="fNbt\NbtString.cs" />
+    <Compile Include="fNbt\NbtTag.cs" />
+    <Compile Include="fNbt\NbtTagType.cs" />
+    <Compile Include="fNbt\NbtWriter.cs" />
+    <Compile Include="fNbt\NbtWriterNode.cs" />
+    <Compile Include="fNbt\TagSelector.cs" />
+    <Compile Include="fNbt\ZLibStream.cs" />
+    <Compile Include="Geometry\Polygon.cs" />
+    <Compile Include="GpcWrapper\GpcOperation.cs" />
+    <Compile Include="GpcWrapper\GpcWrapper.cs" />
+    <Compile Include="GpcWrapper\Polygon.cs" />
+    <Compile Include="GpcWrapper\Tristrip.cs" />
+    <Compile Include="GpcWrapper\Vertex.cs" />
+    <Compile Include="GpcWrapper\VertexList.cs" />
+    <Compile Include="JetBrains\Annotations\CanBeNullAttribute.cs" />
+    <Compile Include="JetBrains\Annotations\NotNullAttribute.cs" />
+    <Compile Include="JetBrains\Annotations\PureAttribute.cs" />
+    <Compile Include="MapBuildException.cs" />
+    <Compile Include="MapJob.cs" />
+    <Compile Include="MapLayerException.cs" />
+    <Compile Include="MapPropertyException.cs" />
+    <Compile Include="MeshBuilder.cs" />
+    <Compile Include="OptimizedTileset.cs" />
+    <Compile Include="Parts\MapPart.cs" />
+    <Compile Include="Parts\MapPartConversionException.cs" />
+    <Compile Include="Parts\MapPartParameterException.cs" />
+    <Compile Include="Parts\MapPartRequirementException.cs" />
+    <Compile Include="PolyBuilder.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TileAnimIdSetter.cs" />
+    <Compile Include="TiledSharp\ITmxElement.cs" />
+    <Compile Include="TiledSharp\PropertyDict.cs" />
+    <Compile Include="TiledSharp\TmxBase64Data.cs" />
+    <Compile Include="TiledSharp\TmxColor.cs" />
+    <Compile Include="TiledSharp\TmxDocument.cs" />
+    <Compile Include="TiledSharp\TmxImage.cs" />
+    <Compile Include="TiledSharp\TmxImageLayer.cs" />
+    <Compile Include="TiledSharp\TmxLayer.cs" />
+    <Compile Include="TiledSharp\TmxLayerTile.cs" />
+    <Compile Include="TiledSharp\TmxList.cs" />
+    <Compile Include="TiledSharp\TmxMap.cs" />
+    <Compile Include="TiledSharp\TmxObjectGroup.cs" />
+    <Compile Include="TiledSharp\TmxTerrain.cs" />
+    <Compile Include="TiledSharp\TmxTileOffset.cs" />
+    <Compile Include="TiledSharp\TmxTileset.cs" />
+    <Compile Include="TiledSharp\TmxTilesetTile.cs" />
+    <Compile Include="TileGroup.cs" />
+    <Compile Include="TileGrouper.cs" />
+    <Compile Include="TilesetDatBuilder.cs" />
+    <Compile Include="TilesetOptimizer.cs" />
+    <Compile Include="TilesetResizer.cs" />
+    <Compile Include="Utility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="violet.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo f | xcopy /y "$(TargetPath)" "C:\Users\Tom\Documents\SunsetRhapsody\SunsetRhapsody\bin\Debug\Debug\$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
