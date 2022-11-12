@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-
+using TiledSharp;
 using VEMC.Parts;
 
 namespace VEMC
@@ -89,7 +89,7 @@ namespace VEMC
 
             Utility.Hash(map.Properties["name"]);
 
-            Dictionary<string, List<TmxObjectGroup.TmxObject>> objectsByType = GetObjectsByType(map.ObjectGroups);
+            Dictionary<string, List<TmxObject>> objectsByType = GetObjectsByType(map.ObjectGroups);
             NbtFile nbtFile = new NbtFile();
 
             NbtCompound mapCompound = new NbtCompound("map");
@@ -119,13 +119,13 @@ namespace VEMC
             Mode++;
 
             MapPart bgm = new MapPart("audbgm", true);
-            objectsByType.TryGetValue("bgm", out List<TmxObjectGroup.TmxObject> bgmObjectList);
+            objectsByType.TryGetValue("bgm", out List<TmxObject> bgmObjectList);
 
             int numberOfBgmParts = 0;
 
             if (bgmObjectList != null)
             {
-                foreach (TmxObjectGroup.TmxObject bgmObj in bgmObjectList)
+                foreach (TmxObject bgmObj in bgmObjectList)
                 {
                     MapPart bgmPart = new MapPart(false);
                     bgmPart.Add("x", bgmObj.X);
@@ -148,12 +148,12 @@ namespace VEMC
 
 
             MapPart audioSfx = new MapPart("audsfx", true);
-            objectsByType.TryGetValue("sfx", out List<TmxObjectGroup.TmxObject> audioSfxObjects);
+            objectsByType.TryGetValue("sfx", out List<TmxObject> audioSfxObjects);
             int num2 = 0;
 
             if (audioSfxObjects != null)
             {
-                foreach (TmxObjectGroup.TmxObject sfxObj in audioSfxObjects)
+                foreach (TmxObject sfxObj in audioSfxObjects)
                 {
                     MapPart sfxPart = new MapPart(false);
                     sfxPart.Add("x", sfxObj.X);
@@ -176,11 +176,11 @@ namespace VEMC
             Mode++;
 
             MapPart doors = new MapPart("doors", true);
-            objectsByType.TryGetValue("door", out List<TmxObjectGroup.TmxObject> doorObjects);
+            objectsByType.TryGetValue("door", out List<TmxObject> doorObjects);
             int num3 = 0;
             if (doorObjects != null)
             {
-                foreach (TmxObjectGroup.TmxObject doorObjs in doorObjects)
+                foreach (TmxObject doorObjs in doorObjects)
                 {
                     MapPart doorPart = new MapPart(false);
                     doorPart.Add("x", doorObjs.X);
@@ -202,15 +202,15 @@ namespace VEMC
             }
             Mode++;
             MapPart triggers = new MapPart("triggers", true);
-            objectsByType.TryGetValue("trigger area", out List<TmxObjectGroup.TmxObject> list5);
+            objectsByType.TryGetValue("trigger area", out List<TmxObject> list5);
             int num4 = 0;
             if (list5 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject4 in list5)
+                foreach (TmxObject tmxObject4 in list5)
                 {
                     MapPart triggerPart = new MapPart(false);
                     NbtList coordsList = new NbtList("coords", NbtTagType.Int);
-                    if (tmxObject4.ObjectType == TmxObjectGroup.TmxObjectType.Polygon)
+                    if (tmxObject4.ObjectType == TmxObjectType.Polygon)
                     {
                         using (List<Tuple<int, int>>.Enumerator enumerator3 = tmxObject4.Points.GetEnumerator())
                         {
@@ -235,7 +235,7 @@ namespace VEMC
                     num4++;
                     continue;
                 IL_7FF:
-                    if (tmxObject4.ObjectType == TmxObjectGroup.TmxObjectType.Basic)
+                    if (tmxObject4.ObjectType == TmxObjectType.Basic)
                     {
                         coordsList.Add(new NbtInt(0));
                         coordsList.Add(new NbtInt(0));
@@ -256,11 +256,11 @@ namespace VEMC
             }
             Mode++;
             MapPart mapPart10 = new MapPart("npcs", true);
-            objectsByType.TryGetValue("npc", out List<TmxObjectGroup.TmxObject> list6);
+            objectsByType.TryGetValue("npc", out List<TmxObject> list6);
             int num5 = 0;
             if (list6 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject5 in list6)
+                foreach (TmxObject tmxObject5 in list6)
                 {
                     MapPart mapPart11 = new MapPart(false);
                     tmxObject5.Properties.TryGetValue("sprite", out string text2);
@@ -337,11 +337,11 @@ namespace VEMC
             }
             Mode++;
             MapPart mapPart12 = new MapPart("paths", true);
-            objectsByType.TryGetValue("npc path", out List<TmxObjectGroup.TmxObject> list9);
+            objectsByType.TryGetValue("npc path", out List<TmxObject> list9);
             int num8 = 0;
             if (list9 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject6 in list9)
+                foreach (TmxObject tmxObject6 in list9)
                 {
                     MapPart mapPart13 = new MapPart(false);
                     mapPart13.Add("name", tmxObject6.Name);
@@ -378,11 +378,11 @@ namespace VEMC
             }
             Mode++;
             MapPart mapPart14 = new MapPart("areas", true);
-            objectsByType.TryGetValue("npc area", out List<TmxObjectGroup.TmxObject> list11);
+            objectsByType.TryGetValue("npc area", out List<TmxObject> list11);
             int num10 = 0;
             if (list11 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject7 in list11)
+                foreach (TmxObject tmxObject7 in list11)
                 {
                     MapPart mapPart15 = new MapPart(false);
                     mapPart15.Add("name", tmxObject7.Name);
@@ -400,11 +400,11 @@ namespace VEMC
             }
             Mode++;
             MapPart mapPart16 = new MapPart("crowds", true);
-            objectsByType.TryGetValue("crowd path", out List<TmxObjectGroup.TmxObject> list12);
+            objectsByType.TryGetValue("crowd path", out List<TmxObject> list12);
             int num11 = 0;
             if (list12 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject8 in list12)
+                foreach (TmxObject tmxObject8 in list12)
                 {
                     MapPart mapPart17 = new MapPart(false);
                     mapPart16.Add(mapPart17);
@@ -459,11 +459,11 @@ namespace VEMC
             }
             Mode++;
             MapPart mapPart18 = new MapPart("spawns", true);
-            objectsByType.TryGetValue("enemy spawn", out List<TmxObjectGroup.TmxObject> list15);
+            objectsByType.TryGetValue("enemy spawn", out List<TmxObject> list15);
             int num14 = 0;
             if (list15 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject9 in list15)
+                foreach (TmxObject tmxObject9 in list15)
                 {
 
                     NbtCompound nbtCompound4 = new NbtCompound();
@@ -504,11 +504,11 @@ namespace VEMC
             }
             Mode++;
             MapPart mapPart19 = new MapPart("parallax", true);
-            objectsByType.TryGetValue("parallax", out List<TmxObjectGroup.TmxObject> list18);
+            objectsByType.TryGetValue("parallax", out List<TmxObject> list18);
             int num16 = 0;
             if (list18 != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject10 in list18)
+                foreach (TmxObject tmxObject10 in list18)
                 {
                     MapPart mapPart20 = new MapPart(false);
                     mapPart19.Add(mapPart20);
@@ -635,7 +635,7 @@ namespace VEMC
             for (int i = map.Layers.Count - 1; i >= 0; i--)
             {
                 string name = map.Layers[i].Name;
-                int count = map.Layers[i].Tiles.Count;
+                int count = map.Layers[i].T.Count;
                 for (int j = 0; j < count; j++)
                 {
                     TmxLayerTile tmxLayerTile = map.Layers[i].Tiles[j];
@@ -701,22 +701,22 @@ namespace VEMC
             }
             return (uint)num;
         }
-        private Dictionary<string, List<TmxObjectGroup.TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
+        private Dictionary<string, List<TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
         {
-            Dictionary<string, List<TmxObjectGroup.TmxObject>> dictionary = new Dictionary<string, List<TmxObjectGroup.TmxObject>>();
+            Dictionary<string, List<TmxObject>> dictionary = new Dictionary<string, List<TmxObject>>();
             foreach (TmxObjectGroup tmxObjectGroup in groupList)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject in tmxObjectGroup.Objects)
+                foreach (TmxObject tmxObject in tmxObjectGroup.Objects)
                 {
                     string key = tmxObject.Type.ToLower();
-                    List<TmxObjectGroup.TmxObject> list;
+                    List<TmxObject> list;
                     if (dictionary.ContainsKey(key))
                     {
                         list = dictionary[key];
                     }
                     else
                     {
-                        list = new List<TmxObjectGroup.TmxObject>();
+                        list = new List<TmxObject>();
                         dictionary.Add(key, list);
                     }
                     list.Add(tmxObject);
