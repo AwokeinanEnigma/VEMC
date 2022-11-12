@@ -59,8 +59,8 @@ namespace VEMC
                 }
             }
             optimizedTileset.Palette = list.ToArray();
-            int width = tset.Image.Width;
-            int height = tset.Image.Height;
+            int width = tset.Image.Width.Value;
+            int height = tset.Image.Height.Value;
             int num5 = num * 8 * 8;
             int num6 = 0;
             for (int m = 0; m < TilesetOptimizer.TILESET_SIZES.Length; m++)

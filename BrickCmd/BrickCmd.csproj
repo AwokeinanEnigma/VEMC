@@ -125,22 +125,14 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileAnimIdSetter.cs" />
-    <Compile Include="TiledSharp\ITmxElement.cs" />
-    <Compile Include="TiledSharp\PropertyDict.cs" />
-    <Compile Include="TiledSharp\TmxBase64Data.cs" />
-    <Compile Include="TiledSharp\TmxColor.cs" />
-    <Compile Include="TiledSharp\TmxDocument.cs" />
-    <Compile Include="TiledSharp\TmxImage.cs" />
-    <Compile Include="TiledSharp\TmxImageLayer.cs" />
-    <Compile Include="TiledSharp\TmxLayer.cs" />
-    <Compile Include="TiledSharp\TmxLayerTile.cs" />
-    <Compile Include="TiledSharp\TmxList.cs" />
-    <Compile Include="TiledSharp\TmxMap.cs" />
-    <Compile Include="TiledSharp\TmxObjectGroup.cs" />
-    <Compile Include="TiledSharp\TmxTerrain.cs" />
-    <Compile Include="TiledSharp\TmxTileOffset.cs" />
-    <Compile Include="TiledSharp\TmxTileset.cs" />
-    <Compile Include="TiledSharp\TmxTilesetTile.cs" />
+    <Compile Include="TiledSharp\Group.cs" />
+    <Compile Include="TiledSharp\ImageLayer.cs" />
+    <Compile Include="TiledSharp\ITmxLayer.cs" />
+    <Compile Include="TiledSharp\Layer.cs" />
+    <Compile Include="TiledSharp\Map.cs" />
+    <Compile Include="TiledSharp\ObjectGroup.cs" />
+    <Compile Include="TiledSharp\TiledCore.cs" />
+    <Compile Include="TiledSharp\Tileset.cs" />
     <Compile Include="TileGroup.cs" />
     <Compile Include="TileGrouper.cs" />
     <Compile Include="TilesetDatBuilder.cs" />
@@ -168,6 +160,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo f | xcopy /y "$(TargetPath)" "C:\Users\Tom\Documents\SunsetRhapsody\SunsetRhapsody\bin\Debug\Debug\$(TargetFileName)"</PostBuildEvent>

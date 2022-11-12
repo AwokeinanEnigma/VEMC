@@ -3,6 +3,7 @@
 using fNbt;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TiledSharp;
 
 namespace VEMC
@@ -42,7 +43,7 @@ namespace VEMC
         {
             NbtCompound nbtCompound = new NbtCompound("spr");
             int num1 = 0;
-            foreach (TmxTilesetTile tile in tmxTileset.Tiles)
+            foreach (TmxTilesetTile tile in tmxTileset.Tiles.Cast<TmxTilesetTile>().ToList())
             {
                 if (tile.Properties.ContainsKey("animid"))
                 {
@@ -52,7 +53,7 @@ namespace VEMC
                     int num4 = (int)tile.Properties.TryGetDecimal("hFrameSkip");
                     float num5 = (float)tile.Properties.TryGetDecimal("speed");
                     int[] numArray = new int[length];
-                    int num6 = tmxTileset.Image.Width / tmxTileset.TileWidth;
+                    int num6 = tmxTileset.Image.Width.Value / tmxTileset.TileWidth;
                     int num7 = tile.Id / num6;
                     bool flag = true;
                     for (int index = 0; index < length; ++index)

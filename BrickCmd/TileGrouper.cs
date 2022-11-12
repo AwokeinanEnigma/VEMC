@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TiledSharp;
 
 namespace VEMC
@@ -18,7 +19,7 @@ namespace VEMC
         {
             List<TileGroup> list = new List<TileGroup>();
             offsets = GetGroupOffsets();
-            foreach (TmxLayer layer in map.Layers)
+            foreach (TmxLayer layer in map.TileLayers)
             {
                 List<TileGroup> collection = FindGroupsInLayer(layer);
                 list.AddRange(collection);
@@ -79,9 +80,10 @@ namespace VEMC
             }
             return num;
         }
+
         public List<TileGroup> FindGroupsInLayer(TmxLayer layer)
         {
-            List<TmxLayerTile> tiles = layer.Tiles;
+            List<TmxLayerTile> tiles = layer.Tiles.Cast<TmxLayerTile>().ToList();
             List<TileGroup> list = new List<TileGroup>();
             TileGrouper.TileData[,] array = new TileGrouper.TileData[map.Width, map.Height];
             int num = 0;

@@ -20,7 +20,7 @@ namespace VEMC
         {
             animationMap = new Dictionary<int, ushort>();
             ushort num1 = 0;
-            foreach (TmxTilesetTile tile in tileset.Tiles)
+            foreach (TmxTilesetTile tile in tileset.Tiles.Values)
             {
                 if (tile.Properties.ContainsKey("animid"))
                 {
@@ -30,7 +30,7 @@ namespace VEMC
                     int num4 = (int)tile.Properties.TryGetDecimal("hFrameSkip");
                     double num5 = (float)tile.Properties.TryGetDecimal("speed");
                     int[] numArray = new int[length];
-                    int num6 = tileset.Image.Width / tileset.TileWidth;
+                    int num6 = tileset.Image.Width.Value / tileset.TileWidth;
                     int num7 = tile.Id / num6;
                     bool flag = true;
                     for (int index = 0; index < length; ++index)
