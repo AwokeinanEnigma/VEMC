@@ -527,6 +527,7 @@ namespace VEMC
                 mapCompound.Add(mapPart19.Tag);
             }
             Mode++;
+
             NbtList nbtList2 = new NbtList("mesh", NbtTagType.List);
             List<List<IntPoint>> list19 = BuildMesh();
             int num17 = 0;
@@ -547,47 +548,40 @@ namespace VEMC
                 mapCompound.Add(nbtList2);
             }
             Mode++;
-            NbtList nbtList3 = new NbtList("tiles", NbtTagType.Compound);
+
+            NbtList genericTilesList = new NbtList("tiles", NbtTagType.Compound);
             TileGrouper tileGrouper = new TileGrouper(map);
-            int num18 = 0;
             List<TileGroup> tileGroups = tileGrouper.FindGroups();
             foreach (TileGroup tileGroup in tileGroups)
             {
-                MapPart mapPart21 = new MapPart(false);
-                mapPart21.Add(new NbtInt("depth", tileGroup.depth));
-                mapPart21.Add(new NbtInt("x", tileGroup.x));
-                mapPart21.Add(new NbtInt("y", tileGroup.y));
-                mapPart21.Add(new NbtInt("ox", tileGroup.originX));
-                mapPart21.Add(new NbtInt("rainaway", tileGroup.depth));
-                mapPart21.Add(new NbtInt("w", tileGroup.width / map.TileWidth));
-                int num19 = tileGroup.width / map.TileWidth;
-                int num20 = tileGroup.height / map.TileHeight;
+                MapPart tileGroupPart = new MapPart(false);
+                tileGroupPart.Add(new NbtInt("depth", tileGroup.depth));
+                tileGroupPart.Add(new NbtInt("x", tileGroup.x));
+                tileGroupPart.Add(new NbtInt("y", tileGroup.y));
+                tileGroupPart.Add(new NbtInt("ox", tileGroup.originX));
+                tileGroupPart.Add(new NbtInt("w", tileGroup.width / map.TileWidth));
+                
+                int tileWidth = tileGroup.width / map.TileWidth;
+                int tileHeight = tileGroup.height / map.TileHeight;
+
                 int groupTileX = tileGroup.x / map.TileWidth;
                 int groupTileY = tileGroup.y / map.TileHeight;
-                uint[] array6 = new uint[num19 * num20];
+
+                uint[] tileSize = new uint[tileWidth * tileHeight];
                 bool flag = true;
+
                 OptimizedTileset optimizedTileset2 = optimizedTilesets[map.Tilesets[0].Name];
                 int y;
-                for (y = 0; y < num20; y++)
+
+                for (y = 0; y < tileHeight; y++)
                 {
                     int x;
-                    for (x = 0; x < num19; x++)
+                    for (x = 0; x < tileWidth; x++)
                     {
                         TileGrouper.TileData tileData = tileGroup.tiles.Find((TileGrouper.TileData t) => t.tile.X == x + groupTileX && t.tile.Y == y + groupTileY);
-                        int num21 = y * num19 + x;
+                        int heightWidthX = y * tileWidth + x;
                         if (tileData.tile != null)
                         {
-                            if (map.Tilesets[0].GetTileById(tileData.tile.Gid - 1) != null)
-                            {
-                                if (map.Tilesets[0].GetTileById(tileData.tile.Gid - 1).Properties != null)
-                                {
-                                    if (map.Tilesets[0].GetTileById(tileData.tile.Gid - 1).Properties.TryGetValue("rainaway", out string _false))
-                                    {
-
-                                        Console.WriteLine("rainaway");
-                                    }
-                                }
-                            }
 
                             if (tileData.tile.Gid > optimizedTileset2.TranslationTable.Count)
                             {
@@ -595,34 +589,37 @@ namespace VEMC
                                 continue;
                             }
 
-                            uint num22 = (uint)(optimizedTileset2.Translate(tileData.tile.Gid));
-                            array6[num21] = (tileData.modifier << 16 | num22);
+
+                            uint translatedGID = (uint)(optimizedTileset2.Translate(tileData.tile.Gid));
+                            tileSize[heightWidthX] = (tileData.modifier << 16 | translatedGID);
                         }
                         else
                         {
-                            array6[num21] = 0U;
+                            tileSize[heightWidthX] = 0U;
                         }
-                        flag = (flag && array6[num21] == 0U);
+                        flag = (flag && tileSize[heightWidthX] == 0U);
                     }
                 }
                 if (!flag)
                 {
-                    byte[] array7 = new byte[array6.Length * 4];
-                    Buffer.BlockCopy(array6, 0, array7, 0, array7.Length);
-                    mapPart21.Add("tiles", array7);
-                    nbtList3.Add(mapPart21.Tag);
-                    num18++;
+                    
+                    byte[] tileBytes = new byte[tileSize.Length * 4];
+                    Buffer.BlockCopy(tileSize, 0, tileBytes, 0, tileBytes.Length);
+                    tileGroupPart.Add("tiles", tileBytes);
+
+                    genericTilesList.Add(tileGroupPart.Tag);
                 }
             }
-            if (nbtList3.Count > 0)
+            if (genericTilesList.Count > 0)
             {
-                mapCompound.Add(nbtList3);
+                mapCompound.Add(genericTilesList);
             }
             Mode++;
             Utility.ConsoleWrite("Saving...                             ", new object[0]);
             string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
             nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
         }
+
         public List<List<IntPoint>> BuildMesh()
         {
             int height = map.Height;

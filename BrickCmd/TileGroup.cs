@@ -14,7 +14,6 @@ namespace VEMC
             originY = group.originY;
             width = group.width;
             height = group.height;
-            rainaway = group.rainaway;
         }
         public List<TileGrouper.TileData> tiles;
         public int depth;
@@ -24,7 +23,5 @@ namespace VEMC
         public int originY;
         public int width;
         public int height;
-
-        public int rainaway;
     }
 }

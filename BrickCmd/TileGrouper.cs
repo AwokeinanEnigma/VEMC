@@ -109,7 +109,8 @@ namespace VEMC
                             top = (array2[1] == "1"),
                             right = (array2[2] == "1"),
                             bottom = (array2[3] == "1"),
-                            modifier = tileModifier
+                            modifier = tileModifier,
+                                                  tree = tileById.Properties.ContainsKey("tree") ? true : false,
                         };
                     }
                     else
@@ -118,7 +119,9 @@ namespace VEMC
                         {
                             tile = tmxLayerTile,
                             groupid = -1,
-                            modifier = tileModifier
+                            modifier = tileModifier,
+                    //        tree = tileById.Properties.ContainsKey("tree") ? true : false,
+
                         };
                     }
                 }
@@ -128,7 +131,8 @@ namespace VEMC
                     {
                         groupid = -3,
                         ignore = true,
-                        modifier = tileModifier
+                        modifier = tileModifier,
+            //                                 tree = tileById.Properties.ContainsKey("tree") ? true : false,
                     };
                 }
                 else
@@ -137,7 +141,8 @@ namespace VEMC
                     {
                         tile = tmxLayerTile,
                         groupid = -1,
-                        modifier = tileModifier
+                        modifier = tileModifier,
+                                               //tree = tileById.Properties.ContainsKey("tree") ? true : false,
                     };
                 }
                 if (num % 100 == 0)
@@ -220,33 +225,33 @@ namespace VEMC
         {
             List<TileGrouper.TileData> list = new List<TileGrouper.TileData>();
             FloodFillStep(ref tiles, x, y, groupid, ref list);
-            int num = int.MinValue;
-            int num2 = int.MaxValue;
-            int num3 = int.MinValue;
-            int num4 = int.MaxValue;
+            int xMax = int.MinValue;
+            int xMaximum = int.MaxValue;
+            int yMax = int.MinValue;
+            int yMaximum = int.MaxValue;
             foreach (TileGrouper.TileData tileData in list)
             {
-                if (tileData.tile.X + 1 > num)
+                if (tileData.tile.X + 1 > xMax)
                 {
-                    num = tileData.tile.X + 1;
+                    xMax = tileData.tile.X + 1;
                 }
-                if (tileData.tile.Y + 1 > num3)
+                if (tileData.tile.Y + 1 > yMax)
                 {
-                    num3 = tileData.tile.Y + 1;
+                    yMax = tileData.tile.Y + 1;
                 }
-                if (tileData.tile.X < num2)
+                if (tileData.tile.X < xMaximum)
                 {
-                    num2 = tileData.tile.X;
+                    xMaximum = tileData.tile.X;
                 }
-                if (tileData.tile.Y < num4)
+                if (tileData.tile.Y < yMaximum)
                 {
-                    num4 = tileData.tile.Y;
+                    yMaximum = tileData.tile.Y;
                 }
             }
-            int num5 = num2 * 8;
-            int num6 = num4 * 8;
-            int num7 = num * 8;
-            int num8 = num3 * 8;
+            int num5 = xMaximum * 8;
+            int num6 = yMaximum * 8;
+            int num7 = xMax * 8;
+            int num8 = yMax * 8;
             int num9 = num7 - num5;
             int num10 = num8 - num6;
             offsets.TryGetValue(groupid, out Point point);
@@ -320,6 +325,7 @@ namespace VEMC
             public bool bottom;
             public bool ignore;
             public uint modifier;
+            public bool tree;
         }
     }
 }
