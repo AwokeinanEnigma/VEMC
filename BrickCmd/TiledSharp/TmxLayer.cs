@@ -15,9 +15,9 @@ namespace TiledSharp
         public TmxLayer(XElement xLayer, int width, int height)
         {
             Name = (string)xLayer.Attribute("name");
-            double? num = (double?)xLayer.Attribute("opacity");
-            Opacity = ((num != null) ? num.GetValueOrDefault() : 1.0);
-            Visible = (((bool?)xLayer.Attribute("visible")) ?? true);
+            Opacity = (double?)xLayer.Attribute("opacity") ?? 1.0;
+            Visible = (bool?)xLayer.Attribute("visible") ?? true;
+
             XElement xelement = xLayer.Element("data");
             string text = (string)xelement.Attribute("encoding");
             Tiles = new List<TmxLayerTile>();

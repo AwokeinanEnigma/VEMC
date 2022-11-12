@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace TiledSharp
@@ -10,23 +11,40 @@ namespace TiledSharp
         public string TmxDirectory { get; private set; }
         protected XDocument ReadXml(string filepath)
         {
-            Assembly executingAssembly = Assembly.GetExecutingAssembly();
-            string[] manifestResourceNames = executingAssembly.GetManifestResourceNames();
-            string fileResPath = filepath.Replace(Path.DirectorySeparatorChar.ToString(), ".");
-            string text = Array.Find<string>(manifestResourceNames, (string s) => s.EndsWith(fileResPath));
-            XDocument result;
-            if (text != null)
+            XDocument xDoc;
+
+            var asm = Assembly.GetEntryAssembly();
+            var manifest = new string[0];
+
+            if (asm != null)
+                manifest = asm.GetManifestResourceNames();
+
+            var fileResPath = filepath.Replace(
+                    Path.DirectorySeparatorChar.ToString(), ".");
+            var fileRes = Array.Find(manifest, s => s.EndsWith(fileResPath));
+
+            // If there is a resource in the assembly, load the resource
+            // Otherwise, assume filepath is an explicit path
+            if (fileRes != null)
             {
-                Stream manifestResourceStream = executingAssembly.GetManifestResourceStream(text);
-                result = XDocument.Load(manifestResourceStream);
-                TmxDirectory = "";
+                using (Stream xmlStream = asm.GetManifestResourceStream(fileRes))
+                {
+                    using (XmlReader reader = XmlReader.Create(xmlStream))
+                    {
+                        xDoc = XDocument.Load(reader);
+                    }
+                }
+                TmxDirectory = String.Empty;
             }
             else
             {
-                result = XDocument.Load(filepath);
+                // TODO: Check for existence of file
+
+                xDoc = XDocument.Load(filepath);
                 TmxDirectory = Path.GetDirectoryName(filepath);
             }
-            return result;
+
+            return xDoc;
         }
     }
 }

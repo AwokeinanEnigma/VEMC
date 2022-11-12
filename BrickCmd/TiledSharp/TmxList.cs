@@ -7,34 +7,38 @@ namespace TiledSharp
 {
     public class TmxList<T> : KeyedCollection<string, T> where T : ITmxElement
     {
+        private Dictionary<string, int> nameCount
+            = new Dictionary<string, int>();
+
         public new void Add(T t)
         {
-            Tuple<TmxList<T>, string> tuple = Tuple.Create<TmxList<T>, string>(this, t.Name);
-            if (base.Contains(t.Name))
-            {
-                Dictionary<Tuple<TmxList<T>, string>, int> dictionary;
-                Tuple<TmxList<T>, string> key;
-                (dictionary = TmxList<T>.nameCount)[key = tuple] = dictionary[key] + 1;
-            }
+            var tName = t.Name;
+
+            // Rename duplicate entries by appending a number
+            if (this.Contains(tName))
+                nameCount[tName] += 1;
             else
-            {
-                TmxList<T>.nameCount.Add(tuple, 0);
-            }
+                nameCount.Add(tName, 0);
             base.Add(t);
         }
-        protected override string GetKeyForItem(T t)
+
+        protected override string GetKeyForItem(T item)
         {
-            Tuple<TmxList<T>, string> key = Tuple.Create<TmxList<T>, string>(this, t.Name);
-            int num = TmxList<T>.nameCount[key];
-            int num2 = 0;
-            string text = t.Name;
-            while (base.Contains(text))
+            var name = item.Name;
+            var count = nameCount[name];
+
+            var dupes = 0;
+
+            // For duplicate keys, append a counter
+            // For pathological cases, insert underscores to ensure uniqueness
+            while (Contains(name))
             {
-                text = t.Name + string.Concat(Enumerable.Repeat<string>("_", num2)) + num;
-                num2++;
+                name = name + String.Concat(Enumerable.Repeat("_", dupes))
+                            + count.ToString();
+                dupes++;
             }
-            return text;
+
+            return name;
         }
-        public static Dictionary<Tuple<TmxList<T>, string>, int> nameCount = new Dictionary<Tuple<TmxList<T>, string>, int>();
     }
 }

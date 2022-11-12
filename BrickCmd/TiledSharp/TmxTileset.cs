@@ -12,6 +12,7 @@ namespace TiledSharp
         public int TileHeight { get; private set; }
         public int Spacing { get; private set; }
         public int Margin { get; private set; }
+
         public TmxTileOffset TileOffset { get; private set; }
         public TmxImage Image { get; private set; }
         public TmxList<TmxTerrain> Terrains { get; private set; }
@@ -22,57 +23,62 @@ namespace TiledSharp
         }
         public TmxTileset(XElement xTileset, string tmxDir = "")
         {
-            XAttribute xattribute = xTileset.Attribute("firstgid");
-            string text = (string)xTileset.Attribute("source");
-            if (text != null)
+            var xFirstGid = xTileset.Attribute("firstgid");
+            var source = (string)xTileset.Attribute("source");
+
+            if (source != null)
             {
-                text = Path.Combine(tmxDir, text);
-                FirstGid = (int)xattribute;
-                XDocument xDoc = base.ReadXml(text);
-                TmxTileset tmxTileset = new TmxTileset(xDoc, base.TmxDirectory);
-                Name = tmxTileset.Name;
-                TileWidth = tmxTileset.TileWidth;
-                TileHeight = tmxTileset.TileHeight;
-                Spacing = tmxTileset.Spacing;
-                Margin = tmxTileset.Margin;
-                TileOffset = tmxTileset.TileOffset;
-                Image = tmxTileset.Image;
-                Terrains = tmxTileset.Terrains;
-                Tiles = tmxTileset.Tiles;
-                Properties = tmxTileset.Properties;
-                return;
+                // Prepend the parent TMX directory if necessary
+                source = Path.Combine(tmxDir, source);
+
+                // source is always preceded by firstgid
+                FirstGid = (int)xFirstGid;
+
+                // Everything else is in the TSX file
+                var xDocTileset = ReadXml(source);
+                var ts = new TmxTileset(xDocTileset, TmxDirectory);
+                Name = ts.Name;
+                TileWidth = ts.TileWidth;
+                TileHeight = ts.TileHeight;
+                Spacing = ts.Spacing;
+                Margin = ts.Margin;
+                TileOffset = ts.TileOffset;
+                Image = ts.Image;
+                Terrains = ts.Terrains;
+                Tiles = ts.Tiles;
+                Properties = ts.Properties;
             }
-            if (xattribute != null)
+            else
             {
-                FirstGid = (int)xattribute;
-            }
-            Name = (string)xTileset.Attribute("name");
-            TileWidth = (int)xTileset.Attribute("tilewidth");
-            TileHeight = (int)xTileset.Attribute("tileheight");
-            Spacing = (((int?)xTileset.Attribute("spacing")) ?? 0);
-            Margin = (((int?)xTileset.Attribute("margin")) ?? 0);
-            TileOffset = new TmxTileOffset(xTileset.Element("tileoffset"));
-            XElement xelement = xTileset.Element("image");
-            if (xelement != null)
-            {
-                Image = new TmxImage(xelement, tmxDir);
-            }
-            Terrains = new TmxList<TmxTerrain>();
-            XElement xelement2 = xTileset.Element("terraintype");
-            if (xelement2 != null)
-            {
-                foreach (XElement xTerrain in xelement2.Elements("terrain"))
+                // firstgid is always in TMX, but not TSX
+                if (xFirstGid != null)
+                    FirstGid = (int)xFirstGid;
+
+                Name = (string)xTileset.Attribute("name");
+                TileWidth = (int)xTileset.Attribute("tilewidth");
+                TileHeight = (int)xTileset.Attribute("tileheight");
+                Spacing = (int?)xTileset.Attribute("spacing") ?? 0;
+                Margin = (int?)xTileset.Attribute("margin") ?? 0;
+                TileOffset = new TmxTileOffset(xTileset.Element("tileoffset"));
+                Image = new TmxImage(xTileset.Element("image"), tmxDir);
+
+                Terrains = new TmxList<TmxTerrain>();
+                var xTerrainType = xTileset.Element("terraintypes");
+                if (xTerrainType != null)
                 {
-                    Terrains.Add(new TmxTerrain(xTerrain));
+                    foreach (var e in xTerrainType.Elements("terrain"))
+                        Terrains.Add(new TmxTerrain(e));
                 }
+
+                Tiles = new List<TmxTilesetTile>();
+                foreach (var xTile in xTileset.Elements("tile"))
+                {
+                    var tile = new TmxTilesetTile(xTile, Terrains, tmxDir);
+                    Tiles.Add(tile);
+                }
+
+                Properties = new PropertyDict(xTileset.Element("properties"));
             }
-            Tiles = new List<TmxTilesetTile>();
-            foreach (XElement xTile in xTileset.Elements("tile"))
-            {
-                TmxTilesetTile item = new TmxTilesetTile(xTile, Terrains, tmxDir);
-                Tiles.Add(item);
-            }
-            Properties = new PropertyDict(xTileset.Element("properties"));
         }
     }
 }
