@@ -14,12 +14,14 @@ namespace TiledSharp
         public TmxImageLayer(XElement xImageLayer, string tmxDir = "")
         {
             Name = (string)xImageLayer.Attribute("name");
+
             Width = (int)xImageLayer.Attribute("width");
             Height = (int)xImageLayer.Attribute("height");
-            Visible = (((bool?)xImageLayer.Attribute("visible")) ?? true);
-            double? num = (double?)xImageLayer.Attribute("opacity");
-            Opacity = ((num != null) ? num.GetValueOrDefault() : 1.0);
+            Visible = (bool?)xImageLayer.Attribute("visible") ?? true;
+            Opacity = (double?)xImageLayer.Attribute("opacity") ?? 1.0;
+
             Image = new TmxImage(xImageLayer.Element("image"), tmxDir);
+
             Properties = new PropertyDict(xImageLayer.Element("properties"));
         }
     }

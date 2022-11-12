@@ -2,6 +2,10 @@
 {
     public class TmxLayerTile
     {
+        // Tile flip bit flags
+        const uint FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+        const uint FLIPPED_VERTICALLY_FLAG = 0x40000000;
+        const uint FLIPPED_DIAGONALLY_FLAG = 0x20000000;
         public int Gid { get; private set; }
         public int X { get; private set; }
         public int Y { get; private set; }
@@ -10,16 +14,23 @@
         public bool DiagonalFlip { get; private set; }
         public TmxLayerTile(uint id, int x, int y)
         {
+            var rawGid = id;
             X = x;
             Y = y;
-            HorizontalFlip = ((id & 2147483648U) != 0U);
-            VerticalFlip = ((id & 1073741824U) != 0U);
-            DiagonalFlip = ((id & 536870912U) != 0U);
-            uint gid = id & 536870911U;
-            Gid = (int)gid;
+            // Scan for tile flip bit flags
+            bool flip;
+            flip = (rawGid & FLIPPED_HORIZONTALLY_FLAG) != 0;
+            HorizontalFlip = flip ? true : false;
+            flip = (rawGid & FLIPPED_VERTICALLY_FLAG) != 0;
+            VerticalFlip = flip ? true : false;
+            flip = (rawGid & FLIPPED_DIAGONALLY_FLAG) != 0;
+            DiagonalFlip = flip ? true : false;
+            // Zero the bit flags
+            rawGid &= ~(FLIPPED_HORIZONTALLY_FLAG |
+                        FLIPPED_VERTICALLY_FLAG |
+                        FLIPPED_DIAGONALLY_FLAG);
+            // Save GID remainder to int
+            Gid = (int)rawGid;
         }
-        private const uint FLIPPED_HORIZONTALLY_FLAG = 2147483648U;
-        private const uint FLIPPED_VERTICALLY_FLAG = 1073741824U;
-        private const uint FLIPPED_DIAGONALLY_FLAG = 536870912U;
     }
 }
