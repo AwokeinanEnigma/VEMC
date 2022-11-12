@@ -43,7 +43,7 @@ namespace VEMC
         {
             NbtCompound nbtCompound = new NbtCompound("spr");
             int num1 = 0;
-            foreach (TmxTilesetTile tile in tmxTileset.Tiles.Cast<TmxTilesetTile>().ToList())
+            foreach (TmxTilesetTile tile in tmxTileset.Tiles.Values.Cast<TmxTilesetTile>().ToList())
             {
                 if (tile.Properties.ContainsKey("animid"))
                 {
