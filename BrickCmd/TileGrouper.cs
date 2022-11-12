@@ -82,10 +82,11 @@ namespace VEMC
         public List<TileGroup> FindGroupsInLayer(TmxLayer layer)
         {
             List<TmxLayerTile> tiles = layer.Tiles;
-            List<TileGroup> list = new List<TileGroup>();
-            TileGrouper.TileData[,] array = new TileGrouper.TileData[map.Width, map.Height];
+            List<TileGroup> tileGroupList = new List<TileGroup>();
+            TileGrouper.TileData[,] tileDataArray = new TileGrouper.TileData[map.Width, map.Height];
+
             int num = 0;
-            int count = tiles.Count;
+            int tileCount = tiles.Count;
             foreach (TmxLayerTile tmxLayerTile in tiles)
             {
                 int num2 = tmxLayerTile.Gid - tileset.FirstGid;
@@ -100,7 +101,7 @@ namespace VEMC
                         {
                             ','
                         });
-                        array[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
+                        tileDataArray[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
                         {
                             tile = tmxLayerTile,
                             groupid = int.Parse(tileById.Properties["group"]),
@@ -113,7 +114,7 @@ namespace VEMC
                     }
                     else
                     {
-                        array[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
+                        tileDataArray[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
                         {
                             tile = tmxLayerTile,
                             groupid = -1,
@@ -123,7 +124,7 @@ namespace VEMC
                 }
                 else if (num2 == -1)
                 {
-                    array[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
+                    tileDataArray[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
                     {
                         groupid = -3,
                         ignore = true,
@@ -132,7 +133,7 @@ namespace VEMC
                 }
                 else
                 {
-                    array[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
+                    tileDataArray[tmxLayerTile.X, tmxLayerTile.Y] = new TileGrouper.TileData
                     {
                         tile = tmxLayerTile,
                         groupid = -1,
@@ -144,7 +145,7 @@ namespace VEMC
                     Utility.ConsoleWrite("Finding tile groups in \"{0}\"({1}%)", new object[]
                     {
                         layer.Name,
-                        Math.Round(num / (double)count * 100.0)
+                        Math.Round(num / (double)tileCount * 100.0)
                     });
                 }
                 num++;
@@ -153,47 +154,48 @@ namespace VEMC
             {
                 for (int j = 0; j < map.Width; j++)
                 {
-                    TileGrouper.TileData tileData = array[j, i];
+                    TileGrouper.TileData tileData = tileDataArray[j, i];
                     if (!tileData.ignore && tileData.groupid > 0)
                     {
-                        TileGroup item = FloodFillGroupGet(ref array, j, i, tileData.groupid);
-                        list.Add(item);
+                        TileGroup item = FloodFillGroupGet(ref tileDataArray, j, i, tileData.groupid);
+                        tileGroupList.Add(item);
                     }
                 }
             }
             Utility.ConsoleWrite("Slicing tile layers...", new object[0]);
-            List<TileGroup> collection = SliceTileLayer(ref array, layer.Properties.ContainsKey("depth") ? int.Parse(layer.Properties["depth"]) : 0);
-            list.AddRange(collection);
-            return list;
+            List<TileGroup> collection = SliceTileLayer(ref tileDataArray, layer.Properties.ContainsKey("depth") ? int.Parse(layer.Properties["depth"]) : 0);
+            tileGroupList.AddRange(collection);
+
+            return tileGroupList;
         }
         private List<TileGroup> SliceTileLayer(ref TileGrouper.TileData[,] tiles, int layerDepth)
         {
-            List<TileGroup> list = new List<TileGroup>();
-            List<uint> list2 = new List<uint>();
-            int num = 40;
-            int num2 = 22;
-            for (int i = 0; i < map.Height; i += num2)
+            List<TileGroup> tileGroup = new List<TileGroup>();
+            List<uint> layerUint = new List<uint>();
+            int forty = 40;
+            int twentytwo = 22;
+            for (int i = 0; i < map.Height; i += twentytwo)
             {
-                for (int j = 0; j < map.Width; j += num)
+                for (int j = 0; j < map.Width; j += forty)
                 {
                     List<TileGrouper.TileData> list3 = new List<TileGrouper.TileData>();
-                    int num3 = i;
-                    while (num3 < i + num2 && num3 < map.Height)
+                    int tileLoop = i;
+                    while (tileLoop < i + twentytwo && tileLoop < map.Height)
                     {
                         int num4 = j;
-                        while (num4 < j + num && num4 < map.Width)
+                        while (num4 < j + forty && num4 < map.Width)
                         {
-                            if (!tiles[num4, num3].ignore)
+                            if (!tiles[num4, tileLoop].ignore)
                             {
-                                list3.Add(tiles[num4, num3]);
-                                if (tiles[num4, num3].modifier > 0U)
+                                list3.Add(tiles[num4, tileLoop]);
+                                if (tiles[num4, tileLoop].modifier > 0U)
                                 {
-                                    list2.Add(tiles[num4, num3].modifier);
+                                    layerUint.Add(tiles[num4, tileLoop].modifier);
                                 }
                             }
                             num4++;
                         }
-                        num3++;
+                        tileLoop++;
                     }
                     if (list3.Count > 0)
                     {
@@ -208,11 +210,11 @@ namespace VEMC
                             width = 320,
                             height = 180
                         };
-                        list.Add(item);
+                        tileGroup.Add(item);
                     }
                 }
             }
-            return list;
+            return tileGroup;
         }
         private TileGroup FloodFillGroupGet(ref TileGrouper.TileData[,] tiles, int x, int y, int groupid)
         {
