@@ -202,11 +202,11 @@ namespace VEMC
             }
             Mode++;
             MapPart triggers = new MapPart("triggers", true);
-            objectsByType.TryGetValue("trigger area", out List<TmxObjectGroup.TmxObject> list5);
+            objectsByType.TryGetValue("trigger area", out List<TmxObjectGroup.TmxObject> triggerList);
             int num4 = 0;
-            if (list5 != null)
+            if (triggerList != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject4 in list5)
+                foreach (TmxObjectGroup.TmxObject tmxObject4 in triggerList)
                 {
                     MapPart triggerPart = new MapPart(false);
                     NbtList coordsList = new NbtList("coords", NbtTagType.Int);
@@ -255,297 +255,304 @@ namespace VEMC
                 mapCompound.Add(triggers.Tag);
             }
             Mode++;
-            MapPart mapPart10 = new MapPart("npcs", true);
-            objectsByType.TryGetValue("npc", out List<TmxObjectGroup.TmxObject> list6);
-            int num5 = 0;
-            if (list6 != null)
+            MapPart npcPart = new MapPart("npcs", true);
+            objectsByType.TryGetValue("npc", out List<TmxObjectGroup.TmxObject> npcList);
+            if (npcList != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject5 in list6)
+                foreach (TmxObjectGroup.TmxObject npcObj in npcList)
                 {
-                    MapPart mapPart11 = new MapPart(false);
-                    tmxObject5.Properties.TryGetValue("sprite", out string text2);
+                    MapPart npc = new MapPart(false);
+                    npcObj.Properties.TryGetValue("sprite", out string text2);
                     if (text2 != null && text2.Trim().Length > 0)
                     {
-                        mapPart11.Add("x", tmxObject5.X + tmxObject5.Width / 2);
-                        mapPart11.Add("y", tmxObject5.Y + tmxObject5.Height / 2);
-                        mapPart11.AddFromDictionary<string>("spr", tmxObject5.Properties, "sprite", string.Empty);
+                        npc.Add("x", npcObj.X + npcObj.Width / 2);
+                        npc.Add("y", npcObj.Y + npcObj.Height / 2);
+                        npc.AddFromDictionary<string>("spr", npcObj.Properties, "sprite", string.Empty);
                     }
                     else
                     {
-                        mapPart11.Add("x", tmxObject5.X);
-                        mapPart11.Add("y", tmxObject5.Y);
-                        mapPart11.Add("w", tmxObject5.Width);
-                        mapPart11.Add("h", tmxObject5.Height);
+                        npc.Add("x", npcObj.X);
+                        npc.Add("y", npcObj.Y);
+                        npc.Add("w", npcObj.Width);
+                        npc.Add("h", npcObj.Height);
                     }
-                    mapPart11.Add("name", tmxObject5.Name);
-                    mapPart11.AddFromDictionary<byte>("dir", tmxObject5.Properties, "direction", 6);
-                    mapPart11.AddFromDictionary<byte>("mov", tmxObject5.Properties, "movement", 0);
-                    mapPart11.AddFromDictionary<float>("spd", tmxObject5.Properties, "speed", 1f);
-                    mapPart11.AddFromDictionary<short>("dst", tmxObject5.Properties, "distance", 20);
-                    mapPart11.AddFromDictionary<short>("dly", tmxObject5.Properties, "delay", 0);
-                    mapPart11.AddFromDictionary<string>("cnstr", tmxObject5.Properties, "constraint", string.Empty);
-                    mapPart11.AddFromDictionary<bool>("cls", tmxObject5.Properties, "collisions", true);
-                    mapPart11.AddFromDictionary<bool>("en", tmxObject5.Properties, "enabled", true);
-                    mapPart11.AddFromDictionary<short>("flag", tmxObject5.Properties, "flag", 0);
-                    mapPart11.AddFromDictionary<bool>("shdw", tmxObject5.Properties, "shadow", true);
-                    mapPart11.AddFromDictionary<bool>("stky", tmxObject5.Properties, "sticky", false);
-                    mapPart11.AddFromDictionary<int>("dpth", tmxObject5.Properties, "depth", int.MinValue);
-                    List<NbtTag> list7 = new List<NbtTag>();
-                    int num6 = 0;
-                    string text3;
-                    while (tmxObject5.Properties.TryGetValue("text" + num6, out text3))
+                    npc.Add("name", npcObj.Name);
+                    npc.AddFromDictionary<byte>("dir", npcObj.Properties, "direction", 6);
+                    npc.AddFromDictionary<byte>("mov", npcObj.Properties, "movement", 0);
+                    npc.AddFromDictionary<float>("spd", npcObj.Properties, "speed", 1f);
+                    npc.AddFromDictionary<short>("dst", npcObj.Properties, "distance", 20);
+                    npc.AddFromDictionary<short>("dly", npcObj.Properties, "delay", 0);
+                    npc.AddFromDictionary<string>("cnstr", npcObj.Properties, "constraint", string.Empty);
+                    npc.AddFromDictionary<bool>("cls", npcObj.Properties, "collisions", true);
+                    npc.AddFromDictionary<bool>("en", npcObj.Properties, "enabled", true);
+                    npc.AddFromDictionary<short>("flag", npcObj.Properties, "flag", 0);
+                    npc.AddFromDictionary<bool>("shdw", npcObj.Properties, "shadow", true);
+                    npc.AddFromDictionary<bool>("stky", npcObj.Properties, "sticky", false);
+                    npc.AddFromDictionary<int>("dpth", npcObj.Properties, "depth", int.MinValue);
+                 
+                    List<NbtTag> textTags = new List<NbtTag>();
+                    
+                    int rufiniIndex = 0;
+                   
+                    string rufiniText;
+
+                    while (npcObj.Properties.TryGetValue("text" + rufiniIndex, out rufiniText))
                     {
-                        string[] array = text3.Split(new char[]
+                        string[] array = rufiniText.Split(new char[]
                         {
                             ','
                         });
                         if (array.Length >= 2)
                         {
-                            list7.Add(new NbtString(string.Format("t{0}", num6), array[0]));
-                            list7.Add(new NbtShort(string.Format("f{0}", num6), short.Parse(array[1])));
+                            textTags.Add(new NbtString(string.Format("t{0}", rufiniIndex), array[0]));
+                            textTags.Add(new NbtShort(string.Format("f{0}", rufiniIndex), short.Parse(array[1])));
                         }
-                        num6++;
+                        rufiniIndex++;
                     }
-                    NbtCompound nbtCompound2 = new NbtCompound("entries");
-                    nbtCompound2.AddRange(list7);
-                    mapPart11.Add(nbtCompound2);
-                    List<NbtTag> list8 = new List<NbtTag>();
-                    int num7 = 0;
-                    while (tmxObject5.Properties.TryGetValue("tele" + num7, out text3))
+
+                    NbtCompound txtEntries = new NbtCompound("entries");
+                    txtEntries.AddRange(textTags);
+                    npc.Add(txtEntries);
+
+                    List<NbtTag> rufiniTextTags = new List<NbtTag>();
+                    int secondRufiniIndex = 0;
+                    while (npcObj.Properties.TryGetValue("tele" + secondRufiniIndex, out rufiniText))
                     {
-                        string[] array2 = text3.Split(new char[]
+                        string[] array2 = rufiniText.Split(new char[]
                         {
                             ','
                         });
                         if (array2.Length >= 2)
                         {
-                            list8.Add(new NbtString(string.Format("t{0}", num7), array2[0]));
-                            list8.Add(new NbtShort(string.Format("f{0}", num7), short.Parse(array2[1])));
+                            rufiniTextTags.Add(new NbtString(string.Format("t{0}", secondRufiniIndex), array2[0]));
+                            rufiniTextTags.Add(new NbtShort(string.Format("f{0}", secondRufiniIndex), short.Parse(array2[1])));
                         }
-                        num7++;
+                        secondRufiniIndex++;
                     }
-                    NbtCompound nbtCompound3 = new NbtCompound("tele");
-                    nbtCompound3.AddRange(list8);
-                    mapPart11.Add(nbtCompound3);
-                    mapPart10.Add(mapPart11);
-                    num5++;
+                    NbtCompound telepathy = new NbtCompound("tele");
+                    telepathy.AddRange(rufiniTextTags);
+                    npc.Add(telepathy);
+                    npcPart.Add(npc);
                 }
             }
-            if (mapPart10.Tags.Count > 0)
+            if (npcPart.Tags.Count > 0)
             {
-                mapCompound.Add(mapPart10.Tag);
+                mapCompound.Add(npcPart.Tag);
             }
             Mode++;
-            MapPart mapPart12 = new MapPart("paths", true);
-            objectsByType.TryGetValue("npc path", out List<TmxObjectGroup.TmxObject> list9);
+
+            MapPart pathsPart = new MapPart("paths", true);
+            objectsByType.TryGetValue("npc path", out List<TmxObjectGroup.TmxObject> pathList);
             int num8 = 0;
-            if (list9 != null)
+            if (pathList != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject6 in list9)
+                foreach (TmxObjectGroup.TmxObject pathObject in pathList)
                 {
-                    MapPart mapPart13 = new MapPart(false);
-                    mapPart13.Add("name", tmxObject6.Name);
-                    List<NbtInt> list10 = new List<NbtInt>();
-                    int num9 = 0;
-                    if (tmxObject6.Points != null)
+                    MapPart pathPart = new MapPart(false);
+                    pathPart.Add("name", pathObject.Name);
+
+                    List<NbtInt> coordsList = new List<NbtInt>();
+                    if (pathObject.Points != null)
                     {
-                        using (List<Tuple<int, int>>.Enumerator enumerator3 = tmxObject6.Points.GetEnumerator())
+                        using (List<Tuple<int, int>>.Enumerator enumerator3 = pathObject.Points.GetEnumerator())
                         {
                             while (enumerator3.MoveNext())
                             {
                                 Tuple<int, int> tuple2 = enumerator3.Current;
-                                list10.Add(new NbtInt(tmxObject6.X + tuple2.Item1));
-                                list10.Add(new NbtInt(tmxObject6.Y + tuple2.Item2));
-                                num9++;
+                                coordsList.Add(new NbtInt(pathObject.X + tuple2.Item1));
+                                coordsList.Add(new NbtInt(pathObject.Y + tuple2.Item2));
                             }
                             goto IL_E84;
                         }
                         goto IL_E6D;
                     IL_E84:
-                        NbtList tag2 = new NbtList("coords", list10, NbtTagType.Int);
-                        mapPart13.Add(tag2);
-                        mapPart12.Add(mapPart13);
+                        NbtList coordsNbtList = new NbtList("coords", coordsList, NbtTagType.Int);
+                        pathPart.Add(coordsNbtList);
+                        pathsPart.Add(pathPart);
                         num8++;
                         continue;
                     }
                 IL_E6D:
-                    throw new Exception(string.Format("NPC Path does not contain points. Make sure you set \"{0}\" to the right type.", tmxObject6.Name));
+                    throw new Exception(string.Format("NPC Path does not contain points. Make sure you set \"{0}\" to the right type.", pathObject.Name));
                 }
             }
-            if (mapPart12.Tags.Count > 0)
+            if (pathsPart.Tags.Count > 0)
             {
-                mapCompound.Add(mapPart12.Tag);
+                mapCompound.Add(pathsPart.Tag);
             }
             Mode++;
-            MapPart mapPart14 = new MapPart("areas", true);
-            objectsByType.TryGetValue("npc area", out List<TmxObjectGroup.TmxObject> list11);
+
+            MapPart areasPart = new MapPart("areas", true);
+            objectsByType.TryGetValue("npc area", out List<TmxObjectGroup.TmxObject> npcAreaList);
             int num10 = 0;
-            if (list11 != null)
+            if (npcAreaList != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject7 in list11)
+                foreach (TmxObjectGroup.TmxObject tmxObject7 in npcAreaList)
                 {
-                    MapPart mapPart15 = new MapPart(false);
-                    mapPart15.Add("name", tmxObject7.Name);
-                    mapPart15.Add("x", tmxObject7.X);
-                    mapPart15.Add("y", tmxObject7.Y);
-                    mapPart15.Add("w", tmxObject7.Width);
-                    mapPart15.Add("h", tmxObject7.Height);
-                    mapPart14.Add(mapPart15);
+                    MapPart npcArea = new MapPart(false);
+                    npcArea.Add("name", tmxObject7.Name);
+                    npcArea.Add("x", tmxObject7.X);
+                    npcArea.Add("y", tmxObject7.Y);
+                    npcArea.Add("w", tmxObject7.Width);
+                    npcArea.Add("h", tmxObject7.Height);
+                    areasPart.Add(npcArea);
                     num10++;
                 }
             }
-            if (mapPart14.Tags.Count > 0)
+            if (areasPart.Tags.Count > 0)
             {
-                mapCompound.Add(mapPart14.Tag);
+                mapCompound.Add(areasPart.Tag);
             }
             Mode++;
-            MapPart mapPart16 = new MapPart("crowds", true);
-            objectsByType.TryGetValue("crowd path", out List<TmxObjectGroup.TmxObject> list12);
-            int num11 = 0;
-            if (list12 != null)
+
+            MapPart crowdsPart = new MapPart("crowds", true);
+            objectsByType.TryGetValue("crowd path", out List<TmxObjectGroup.TmxObject> crowdsPath);
+            if (crowdsPath != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject8 in list12)
+                foreach (TmxObjectGroup.TmxObject crowdObject in crowdsPath)
                 {
-                    MapPart mapPart17 = new MapPart(false);
-                    mapPart16.Add(mapPart17);
-                    mapPart17.AddFromDictionary<int>("mode", tmxObject8.Properties, "mode");
-                    List<NbtShort> list13 = new List<NbtShort>();
-                    tmxObject8.Properties.TryGetValue("sprites", out string text4);
-                    if (text4 != null)
+                    MapPart crowdPath = new MapPart(false);
+                    crowdsPart.Add(crowdPath);
+                    crowdPath.AddFromDictionary<int>("mode", crowdObject.Properties, "mode");
+
+                    List<NbtShort> spritesInArea = new List<NbtShort>();
+                    crowdObject.Properties.TryGetValue("sprites", out string spriteString);
+                    if (spriteString != null)
                     {
-                        string[] array3 = text4.Split(new char[]
+                        string[] array3 = spriteString.Split(new char[]
                         {
                             ','
                         });
-                        int num12 = 0;
                         foreach (string s in array3)
                         {
-                            list13.Add(new NbtShort(short.Parse(s)));
-                            num12++;
+                            spritesInArea.Add(new NbtShort(short.Parse(s)));
                         }
-                        NbtList tag3 = new NbtList("sprs", list13, NbtTagType.Short);
-                        mapPart17.Add(tag3);
-                        List<NbtInt> list14 = new List<NbtInt>();
+
+                        NbtList sprites = new NbtList("sprs", spritesInArea, NbtTagType.Short);
+                        crowdPath.Add(sprites);
+
+                        List<NbtInt> npcNbtInt = new List<NbtInt>();
                         int num13 = 0;
-                        if (tmxObject8.Points != null)
+                        if (crowdObject.Points != null)
                         {
-                            using (List<Tuple<int, int>>.Enumerator enumerator3 = tmxObject8.Points.GetEnumerator())
+                            using (List<Tuple<int, int>>.Enumerator tuplesEnumerator = crowdObject.Points.GetEnumerator())
                             {
-                                while (enumerator3.MoveNext())
+                                while (tuplesEnumerator.MoveNext())
                                 {
-                                    Tuple<int, int> tuple3 = enumerator3.Current;
-                                    list14.Add(new NbtInt(tuple3.Item1));
-                                    list14.Add(new NbtInt(tuple3.Item2));
+                                    Tuple<int, int> currentTuple = tuplesEnumerator.Current;
+                                    npcNbtInt.Add(new NbtInt(currentTuple.Item1));
+                                    npcNbtInt.Add(new NbtInt(currentTuple.Item2));
                                     num13++;
                                 }
                                 goto IL_1191;
                             }
                             goto IL_117A;
                         IL_1191:
-                            NbtList tag4 = new NbtList("coords", list14, NbtTagType.Int);
-                            mapPart17.Add(tag4);
-                            num11++;
+                            NbtList coordsNbtList = new NbtList("coords", npcNbtInt, NbtTagType.Int);
+                            crowdPath.Add(coordsNbtList);
                             continue;
                         }
                     IL_117A:
-                        throw new Exception(string.Format("Crowd Path does not contain points. Make sure you set \"{0}\" to the right type.", tmxObject8.Name));
+                        throw new Exception(string.Format("Crowd Path does not contain points. Make sure you set \"{0}\" to the right type.", crowdObject.Name));
                     }
-                    throw new MapPartRequirementException(tmxObject8.Name, "sprites");
+                    throw new MapPartRequirementException(crowdObject.Name, "sprites");
                 }
             }
-            if (mapPart16.Tags.Count > 0)
+            if (crowdsPart.Tags.Count > 0)
             {
-                mapCompound.Add(mapPart16.Tag);
+                mapCompound.Add(crowdsPart.Tag);
             }
             Mode++;
-            MapPart mapPart18 = new MapPart("spawns", true);
-            objectsByType.TryGetValue("enemy spawn", out List<TmxObjectGroup.TmxObject> list15);
-            int num14 = 0;
-            if (list15 != null)
+            MapPart spawnsPart = new MapPart("spawns", true);
+            objectsByType.TryGetValue("enemy spawn", out List<TmxObjectGroup.TmxObject> enemySpawnObjects);
+
+            if (enemySpawnObjects != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject9 in list15)
+                foreach (TmxObjectGroup.TmxObject enemySpawn in enemySpawnObjects)
                 {
 
-                    NbtCompound nbtCompound4 = new NbtCompound();
-                    mapPart18.Add(nbtCompound4);
+                    NbtCompound spawnCompound = new NbtCompound();
+                    spawnsPart.Add(spawnCompound);
                     Console.WriteLine($"3");
-                    nbtCompound4.Add(new NbtInt("x", tmxObject9.X));
-                    nbtCompound4.Add(new NbtInt("y", tmxObject9.Y));
-                    nbtCompound4.Add(new NbtInt("w", tmxObject9.Width));
-                    nbtCompound4.Add(new NbtInt("h", tmxObject9.Height));
-                    tmxObject9.Properties.TryGetValue("flag", out string s2);
-                    short value = short.Parse(s2);
-                    nbtCompound4.Add(new NbtShort("flag", value));
-                    List<NbtString> list16 = new List<NbtString>();
-                    List<NbtByte> list17 = new List<NbtByte>();
+                    spawnCompound.Add(new NbtInt("x", enemySpawn.X));
+                    spawnCompound.Add(new NbtInt("y", enemySpawn.Y));
+                    spawnCompound.Add(new NbtInt("w", enemySpawn.Width));
+                    spawnCompound.Add(new NbtInt("h", enemySpawn.Height));
 
-                    IEnumerable<KeyValuePair<string, string>> thing = tmxObject9.Properties.Where(x => x.Key.Contains("enemy"));
-                    foreach (KeyValuePair<string, string> strung in thing)
+                    //...?
+                    enemySpawn.Properties.TryGetValue("flag", out string s2);
+                    short value = short.Parse(s2);
+                    spawnCompound.Add(new NbtShort("flag", value));
+
+                    List<NbtString> enemyId = new List<NbtString>();
+                    List<NbtByte> enemyByte = new List<NbtByte>();
+
+                    IEnumerable<KeyValuePair<string, string>> enemyPairs = enemySpawn.Properties.Where(x => x.Key.Contains("enemy"));
+                    foreach (KeyValuePair<string, string> strung in enemyPairs)
                     {
                         Console.WriteLine($"strung, {strung.Key}, {strung.Value}");
-                        string[] array5 = strung.Value.Split(new char[]
+                        string[] enemyDataSplit = strung.Value.Split(new char[]
                         {
                             ','
                         });
-                        Console.WriteLine($"Enemy: {array5[0]}");
-                        list16.Add(new NbtString(array5[0]));
-                        list17.Add(new NbtByte(byte.Parse(array5[1])));
+
+                        Console.WriteLine($"Enemy: {enemyDataSplit[0]}");
+                        enemyId.Add(new NbtString(enemyDataSplit[0]));
+                        enemyByte.Add(new NbtByte(byte.Parse(enemyDataSplit[1])));
+
                     }
-                    NbtList newTag = new NbtList("enids", list16, NbtTagType.String);
-                    NbtList newTag2 = new NbtList("enfreqs", list17, NbtTagType.Byte);
-                    nbtCompound4.Add(newTag);
-                    nbtCompound4.Add(newTag2);
-                    num14++;
+                    NbtList enemyIdList = new NbtList("enids", enemyId, NbtTagType.String);
+                    NbtList enemyFrequencies = new NbtList("enfreqs", enemyByte, NbtTagType.Byte);
+                    spawnCompound.Add(enemyIdList);
+                    spawnCompound.Add(enemyFrequencies);
                 }
             }
-            if (mapPart18.Tags.Count > 0)
+            if (spawnsPart.Tags.Count > 0)
             {
-                mapCompound.Add(mapPart18.Tag);
+                mapCompound.Add(spawnsPart.Tag);
             }
             Mode++;
-            MapPart mapPart19 = new MapPart("parallax", true);
-            objectsByType.TryGetValue("parallax", out List<TmxObjectGroup.TmxObject> list18);
-            int num16 = 0;
-            if (list18 != null)
+            MapPart parallaxPart = new MapPart("parallax", true);
+            objectsByType.TryGetValue("parallax", out List<TmxObjectGroup.TmxObject> parallaxList);
+            if (parallaxList != null)
             {
-                foreach (TmxObjectGroup.TmxObject tmxObject10 in list18)
+                foreach (TmxObjectGroup.TmxObject currentParallax in parallaxList)
                 {
-                    MapPart mapPart20 = new MapPart(false);
-                    mapPart19.Add(mapPart20);
-                    mapPart20.AddFromDictionary<string>("spr", tmxObject10.Properties, "sprite");
-                    mapPart20.AddFromDictionary<float>("vx", tmxObject10.Properties, "vx", 1f);
-                    mapPart20.AddFromDictionary<float>("vy", tmxObject10.Properties, "vy", 1f);
-                    mapPart20.Add(new NbtFloat("x", tmxObject10.X));
-                    mapPart20.Add(new NbtFloat("y", tmxObject10.Y));
-                    mapPart20.Add(new NbtFloat("w", tmxObject10.Width));
-                    mapPart20.Add(new NbtFloat("h", tmxObject10.Height));
-                    num16++;
+                    MapPart parallax = new MapPart(false);
+                    parallaxPart.Add(parallax);
+
+                    parallax.AddFromDictionary<string>("spr", currentParallax.Properties, "sprite");
+                    parallax.AddFromDictionary<float>("vx", currentParallax.Properties, "vx", 1f);
+                    parallax.AddFromDictionary<float>("vy", currentParallax.Properties, "vy", 1f);
+                    parallax.Add(new NbtFloat("x", currentParallax.X));
+                    parallax.Add(new NbtFloat("y", currentParallax.Y));
+                    parallax.Add(new NbtFloat("w", currentParallax.Width));
+                    parallax.Add(new NbtFloat("h", currentParallax.Height));
                 }
             }
-            if (mapPart19.Tags.Count > 0)
+            if (parallaxPart.Tags.Count > 0)
             {
-                mapCompound.Add(mapPart19.Tag);
+                mapCompound.Add(parallaxPart.Tag);
             }
             Mode++;
 
-            NbtList nbtList2 = new NbtList("mesh", NbtTagType.List);
-            List<List<IntPoint>> list19 = BuildMesh();
-            int num17 = 0;
-            foreach (List<IntPoint> list20 in list19)
+            NbtList meshPart = new NbtList("mesh", NbtTagType.List);
+            List<List<IntPoint>> mesh = BuildMesh();
+            foreach (List<IntPoint> pointList in mesh)
             {
-                List<NbtInt> list21 = new List<NbtInt>();
-                foreach (IntPoint intPoint in list20)
+                List<NbtInt> point = new List<NbtInt>();
+                foreach (IntPoint intPoint in pointList)
                 {
-                    list21.Add(new NbtInt((int)intPoint.X));
-                    list21.Add(new NbtInt((int)intPoint.Y));
+                    point.Add(new NbtInt((int)intPoint.X));
+                    point.Add(new NbtInt((int)intPoint.Y));
                 }
-                NbtList newTag3 = new NbtList(list21, NbtTagType.Int);
-                nbtList2.Add(newTag3);
-                num17++;
+
+                NbtList listofPoints = new NbtList(point, NbtTagType.Int);
+                meshPart.Add(listofPoints);
             }
-            if (nbtList2.Count > 0)
+            if (meshPart.Count > 0)
             {
-                mapCompound.Add(nbtList2);
+                mapCompound.Add(meshPart);
             }
             Mode++;
 
@@ -568,7 +575,7 @@ namespace VEMC
                 int groupTileY = tileGroup.y / map.TileHeight;
 
                 uint[] tileSize = new uint[tileWidth * tileHeight];
-                bool flag = true;
+                bool invalidTile = true;
 
                 OptimizedTileset optimizedTileset2 = optimizedTilesets[map.Tilesets[0].Name];
                 int y;
@@ -591,16 +598,19 @@ namespace VEMC
 
 
                             uint translatedGID = (uint)(optimizedTileset2.Translate(tileData.tile.Gid));
-                            tileSize[heightWidthX] = (tileData.modifier << 16 | translatedGID);
+                            uint val = (tileData.modifier << 16 | translatedGID);
+                            
+                            tileSize[heightWidthX] = val;
                         }
                         else
                         {
                             tileSize[heightWidthX] = 0U;
                         }
-                        flag = (flag && tileSize[heightWidthX] == 0U);
+                        invalidTile = (invalidTile && tileSize[heightWidthX] == 0U);
                     }
                 }
-                if (!flag)
+                if (!invalidTile)
+
                 {
                     
                     byte[] tileBytes = new byte[tileSize.Length * 4];
@@ -668,36 +678,7 @@ namespace VEMC
             meshBuilder.Simplify();
             return meshBuilder.Solution;
         }
-        private uint CheckGraphicsManifest(string filename)
-        {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-            string path = Utility.AppDirectory + "\\Resources\\Graphics\\manifest.txt";
-            FileStream fileStream = new FileStream(path, FileMode.Open);
-            StreamReader streamReader = new StreamReader(fileStream);
-            int num = -1;
-            int num2 = 0;
-            while (!streamReader.EndOfStream)
-            {
-                string a = streamReader.ReadLine();
-                if (a == fileNameWithoutExtension)
-                {
-                    num = num2;
-                    break;
-                }
-                num2++;
-            }
-            fileStream.Close();
-            if (num == -1)
-            {
-                fileStream = new FileStream(path, FileMode.Append);
-                StreamWriter streamWriter = new StreamWriter(fileStream);
-                streamWriter.WriteLine(fileNameWithoutExtension);
-                streamWriter.Close();
-                num = File.ReadLines(path).Count<string>() - 1;
-                Console.WriteLine(filename + " was added to the graphics manifest.");
-            }
-            return (uint)num;
-        }
+
         private Dictionary<string, List<TmxObjectGroup.TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
         {
             Dictionary<string, List<TmxObjectGroup.TmxObject>> dictionary = new Dictionary<string, List<TmxObjectGroup.TmxObject>>();
@@ -721,38 +702,8 @@ namespace VEMC
             }
             return dictionary;
         }
-        private TmxObjectGroup ObjectGroupByName(TmxList<TmxObjectGroup> list, string name)
-        {
-            foreach (TmxObjectGroup tmxObjectGroup in list)
-            {
-                if (tmxObjectGroup.Name.ToLower() == name.ToLower())
-                {
-                    return tmxObjectGroup;
-                }
-            }
-            throw new Exception("Object group with name \"" + name + "\" does not exist.");
-        }
-        private bool ObjectGroupExists(TmxList<TmxObjectGroup> list, string name)
-        {
-            foreach (TmxObjectGroup tmxObjectGroup in list)
-            {
-                if (tmxObjectGroup.Name.ToLower() == name.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         private TmxMap map;
-        private readonly List<Tuple<string, byte>> effectDict = new List<Tuple<string, byte>>
-        {
-            new Tuple<string, byte>("none", 0),
-            new Tuple<string, byte>("rain", 1),
-            new Tuple<string, byte>("storm", 2),
-            new Tuple<string, byte>("snow", 3),
-            new Tuple<string, byte>("underwater", 4),
-            new Tuple<string, byte>("lighting", 5)
-        };
+
         private readonly Dictionary<int, Point[]> collisionMasks = new Dictionary<int, Point[]>
         {
             {
