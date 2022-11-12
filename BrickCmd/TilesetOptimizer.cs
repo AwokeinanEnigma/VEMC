@@ -4,13 +4,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using TiledSharp;
+
 
 namespace VEMC
 {
     internal class TilesetOptimizer
     {
-        public static OptimizedTileset Optimize(TmxTileset tset)
+        public static OptimizedTileset Optimize(TiledTileset tset)
         {
             OptimizedTileset optimizedTileset = new OptimizedTileset();
             Point point = TilesetOptimizer.LoadImage(tset.Image.Source, tset.Image.Trans, out List<Color> list, out byte[] array);

@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using TiledSharp;
+
 using VEMC.Parts;
 
 namespace VEMC
@@ -65,22 +65,22 @@ namespace VEMC
 
             void CreateTilesetDatFiles(Dictionary<string, OptimizedTileset> tilesetDict, List<NbtCompound> compound)
             {
-                foreach (TmxTileset tmxTileset in map.Tilesets)
+                foreach (TiledTileset TiledTileset in map.Tilesets)
                 {
-                    if (tmxTileset.Image != null)
+                    if (TiledTileset.Image != null)
                     {
-                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(tmxTileset.Image.Source);
-                        int firstGid = tmxTileset.FirstGid;
-                        OptimizedTileset optimizedTileset = TilesetOptimizer.Optimize(tmxTileset);
-                        tilesetDict.Add(tmxTileset.Name, optimizedTileset);
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(TiledTileset.Image.Source);
+                        int firstGid = TiledTileset.FirstGid;
+                        OptimizedTileset optimizedTileset = TilesetOptimizer.Optimize(TiledTileset);
+                        tilesetDict.Add(TiledTileset.Name, optimizedTileset);
                         compound.Add(new NbtCompound
                         {
                             new NbtString("ts", fileNameWithoutExtension),
                             new NbtInt("tid", firstGid)
                         });
-                        TmxColor trans = tmxTileset.Image.Trans;
+                        TmxColor trans = TiledTileset.Image.Trans;
                         Color.FromArgb(trans.R, trans.G, trans.B);
-                        NbtFile tileSetDat = TilesetDatBuilder.Build(tmxTileset, optimizedTileset);
+                        NbtFile tileSetDat = TilesetDatBuilder.Build(TiledTileset, optimizedTileset);
                         string fileName = Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets\\" + fileNameWithoutExtension + ".mtdat";
                         tileSetDat.SaveToFile(fileName, NbtCompression.GZip);
                     }
@@ -627,7 +627,7 @@ namespace VEMC
         {
             int height = map.Height;
             int width = map.Width;
-            TmxTileset tileset = map.Tilesets[0];
+            TiledTileset tileset = map.Tilesets[0];
             int num = width * height * map.Layers.Count;
             int num2 = 0;
             MeshBuilder meshBuilder = new MeshBuilder();
@@ -642,7 +642,7 @@ namespace VEMC
                     int gid = tmxLayerTile.Gid - 1;
                     int x = tmxLayerTile.X;
                     int y = tmxLayerTile.Y;
-                    TmxTilesetTile tileById = tileset.GetTileById(gid);
+                    TiledTilesetTile tileById = tileset.GetTileById(gid);
                     if (tileById != null)
                     {
                         int num3 = 0;

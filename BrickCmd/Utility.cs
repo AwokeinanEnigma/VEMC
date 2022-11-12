@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using TiledSharp;
+
 
 namespace VEMC
 {
@@ -76,9 +76,9 @@ namespace VEMC
             Console.Write(format, args);
             Console.SetCursorPosition(0, cursorTop);
         }
-        public static TmxTilesetTile GetTileById(this TmxTileset tileset, int gid)
+        public static TiledTilesetTile GetTileById(this TiledTileset tileset, int gid)
         {
-            TmxTilesetTile result = null;
+            TiledTilesetTile result = null;
             int count = tileset.Tiles.Count;
             int firstGid = tileset.FirstGid;
             for (int i = 0; i < count; i++)

@@ -1,16 +1,16 @@
 ﻿// Decompiled with JetBrains decompiler
 
 using System.Collections.Generic;
-using TiledSharp;
+using TiledCS;
 
 namespace VEMC
 {
     internal class TileAnimIdSetter
     {
-        private readonly TmxTileset tileset;
+        private readonly TiledTileset tileset;
         private IDictionary<int, ushort> animationMap;
 
-        public TileAnimIdSetter(TmxTileset tileset)
+        public TileAnimIdSetter(TiledTileset tileset)
         {
             this.tileset = tileset;
             BuildAnimationMap();
@@ -20,9 +20,9 @@ namespace VEMC
         {
             animationMap = new Dictionary<int, ushort>();
             ushort num1 = 0;
-            foreach (TmxTilesetTile tile in tileset.Tiles)
+            foreach (TiledTile tile in tileset.Tiles)
             {
-                if (tile.Properties.ContainsKey("animid"))
+                if (tile.properties[]("animid"))
                 {
                     int num2 = (int)tile.Properties.TryGetDecimal("animid");
                     int length = (int)tile.Properties.TryGetDecimal("frames");

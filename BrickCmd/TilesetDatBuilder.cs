@@ -3,22 +3,22 @@
 using fNbt;
 using System.Collections.Generic;
 using System.Drawing;
-using TiledSharp;
+
 
 namespace VEMC
 {
     internal static class TilesetDatBuilder
     {
-        public static NbtFile Build(TmxTileset tmxTileset, OptimizedTileset optTileset)
+        public static NbtFile Build(TiledTileset TiledTileset, OptimizedTileset optTileset)
         {
             NbtFile nbtFile = new NbtFile();
             NbtCompound rootTag = nbtFile.RootTag;
-            rootTag.Name = tmxTileset.Name;
+            rootTag.Name = TiledTileset.Name;
             int width = optTileset.Width;
             rootTag.Add(new NbtInt("w", width));
             rootTag.Add(new NbtByteArray("img", optTileset.IndexedImage));
             rootTag.Add(TilesetDatBuilder.CreatePaletteTag(optTileset.Palette));
-            rootTag.Add(TilesetDatBuilder.CreateAnimationTag(tmxTileset, optTileset));
+            rootTag.Add(TilesetDatBuilder.CreateAnimationTag(TiledTileset, optTileset));
             return nbtFile;
         }
 
@@ -37,12 +37,12 @@ namespace VEMC
         }
 
         private static NbtCompound CreateAnimationTag(
-          TmxTileset tmxTileset,
+          TiledTileset TiledTileset,
           OptimizedTileset optTileset)
         {
             NbtCompound nbtCompound = new NbtCompound("spr");
             int num1 = 0;
-            foreach (TmxTilesetTile tile in tmxTileset.Tiles)
+            foreach (TiledTilesetTile tile in TiledTileset.Tiles)
             {
                 if (tile.Properties.ContainsKey("animid"))
                 {
@@ -52,12 +52,12 @@ namespace VEMC
                     int num4 = (int)tile.Properties.TryGetDecimal("hFrameSkip");
                     float num5 = (float)tile.Properties.TryGetDecimal("speed");
                     int[] numArray = new int[length];
-                    int num6 = tmxTileset.Image.Width / tmxTileset.TileWidth;
+                    int num6 = TiledTileset.Image.Width / TiledTileset.TileWidth;
                     int num7 = tile.Id / num6;
                     bool flag = true;
                     for (int index = 0; index < length; ++index)
                     {
-                        int num8 = tmxTileset.FirstGid + tile.Id + index * num4;
+                        int num8 = TiledTileset.FirstGid + tile.Id + index * num4;
                         int num9 = num8 / num6;
                         int old = num8 + (num9 - num7) * (num6 * num3);
                         numArray[index] = optTileset.Translate(old);

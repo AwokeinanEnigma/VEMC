@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using TiledSharp;
+
 
 namespace VEMC
 {
     internal class TilesetResizer
     {
         public Image TilesetImage => tilesetImage;
-        public TilesetResizer(TmxTileset tileset, int tileCount)
+        public TilesetResizer(TiledTileset tileset, int tileCount)
         {
             tilesetImage = new Bitmap(tileset.Image.Source);
             this.tileCount = tileCount;

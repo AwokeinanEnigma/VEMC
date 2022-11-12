@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using TiledSharp;
+
 
 namespace VEMC
 {
@@ -71,7 +71,7 @@ namespace VEMC
             {
                 num |= 4U;
             }
-            TmxTilesetTile tileById = tileset.GetTileById(tile.Gid - 1);
+            TiledTilesetTile tileById = tileset.GetTileById(tile.Gid - 1);
             if (tileById != null && tileById.Properties.ContainsKey("actualid"))
             {
                 uint num2 = (uint)tileById.Properties.TryGetDecimal("actualid") + 1U;
@@ -89,7 +89,7 @@ namespace VEMC
             foreach (TmxLayerTile tmxLayerTile in tiles)
             {
                 int num2 = tmxLayerTile.Gid - tileset.FirstGid;
-                TmxTilesetTile tileById = tileset.GetTileById(num2);
+                TiledTilesetTile tileById = tileset.GetTileById(num2);
                 uint tileModifier = GetTileModifier(tmxLayerTile);
                 if (tileById != null)
                 {
@@ -299,7 +299,7 @@ namespace VEMC
         private const int TILE_WIDTH = 8;
         private const int TILE_HEIGHT = 8;
         private readonly TmxMap map;
-        private readonly TmxTileset tileset;
+        private readonly TiledTileset tileset;
         private Dictionary<int, Point> offsets;
         private readonly List<TileGrouper.TileAnimation> animations;
         public struct TileAnimation
