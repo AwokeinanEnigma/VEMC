@@ -1,4 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
+﻿
 
 using fNbt;
 using System;
