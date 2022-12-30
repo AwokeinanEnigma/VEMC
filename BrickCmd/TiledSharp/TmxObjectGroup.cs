@@ -47,8 +47,9 @@ namespace TiledSharp
             {
                 Id = (int?)xObject.Attribute("id") ?? 0;
                 Name = (string)xObject.Attribute("name") ?? String.Empty;
-                X = (int)xObject.Attribute("x");
-                Y = (int)xObject.Attribute("y");
+                Console.WriteLine($"{xObject.Attribute("x").Value}");
+                X = ((int)(float)xObject.Attribute("x"));
+                Y = ((int)(float)xObject.Attribute("y"));
                 Width = (int?)xObject.Attribute("width") ?? 0;
                 Height = (int?)xObject.Attribute("height") ?? 0;
                 if (xObject.Attribute("class") != null)

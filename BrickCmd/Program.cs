@@ -11,6 +11,8 @@ namespace VEMC
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Version version = Assembly.GetEntryAssembly().GetName().Version;
+            Debug.Initialize();
+
             Console.WriteLine("VEMC Version {0}.{1}.{2} CMD - ", version.Major, version.Minor, version.Build);
             Console.WriteLine("Using NUGET since the dawn of time");
             Console.ResetColor();

@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace VEMC.Parts
 {
-    internal class MapPart
+    public class MapPart
     {
         protected NbtTag tag;
         protected string name;

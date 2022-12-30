@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace VEMC
 {
-    internal class OptimizedTileset
+    public class OptimizedTileset
     {
         public int Width { get; set; }
         public Dictionary<int, int> TranslationTable { get; set; }

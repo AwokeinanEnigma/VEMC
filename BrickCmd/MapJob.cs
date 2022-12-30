@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using TiledSharp;
 using VEMC.Parts;
 
@@ -94,7 +95,7 @@ namespace VEMC
 
             NbtCompound mapCompound = new NbtCompound("map");
             nbtFile.RootTag = mapCompound;
-            Mode++;
+            
 
             MapPart mapHeader = new MapPart("head");
             AddToHeader(mapHeader);
@@ -115,510 +116,34 @@ namespace VEMC
             mapHeader.Add(tag);
             mapCompound.Add(mapHeader.Tag);
 
-            Mode++;
-            Mode++;
 
-            MapPart bgm = new MapPart("audbgm", true);
-            objectsByType.TryGetValue("bgm", out List<TmxObjectGroup.TmxObject> bgmObjectList);
-
-            int numberOfBgmParts = 0;
-
-            if (bgmObjectList != null)
-            {
-                foreach (TmxObjectGroup.TmxObject bgmObj in bgmObjectList)
-                {
-                    MapPart bgmPart = new MapPart(false);
-                    bgmPart.Add("x", bgmObj.X);
-                    bgmPart.Add("y", bgmObj.Y);
-                    bgmPart.Add("w", bgmObj.Width);
-                    bgmPart.Add("h", bgmObj.Height);
-                    bgmPart.AddFromDictionary<short>("flag", bgmObj.Properties, "playflag", 0);
-                    bgmPart.AddFromDictionary<bool>("loop", bgmObj.Properties, "loop", true);
-                    bgmPart.AddFromDictionary<string>("bgm", bgmObj.Properties, "bgm");
-                    bgm.Add(bgmPart);
-                    numberOfBgmParts++;
-                }
-            }
-
-            if (bgm.Tags.Count > 0)
-            {
-                mapCompound.Add(bgm.Tag);
-            }
-            Mode++;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            // the code that you want to measure comes here
 
 
-            MapPart audioSfx = new MapPart("audsfx", true);
-            objectsByType.TryGetValue("sfx", out List<TmxObjectGroup.TmxObject> audioSfxObjects);
-            int num2 = 0;
+            // Create a list of tasks to execute the build methods in parallel
+            List<Task> tasks = new List<Task>();
 
-            if (audioSfxObjects != null)
-            {
-                foreach (TmxObjectGroup.TmxObject sfxObj in audioSfxObjects)
-                {
-                    MapPart sfxPart = new MapPart(false);
-                    sfxPart.Add("x", sfxObj.X);
-                    sfxPart.Add("y", sfxObj.Y);
-                    sfxPart.Add("w", sfxObj.Width);
-                    sfxPart.Add("h", sfxObj.Height);
-                    sfxPart.AddFromDictionary<short>("flag", sfxObj.Properties, "playFlag", 0);
-                    sfxPart.AddFromDictionary<short>("interval", sfxObj.Properties, "interval", 0);
-                    sfxPart.AddFromDictionary<bool>("loop", sfxObj.Properties, "loop", true);
-                    sfxPart.AddFromDictionary<string>("sfx", sfxObj.Properties, "sfx");
-                    audioSfx.Add(sfxPart);
-                    num2++;
-                }
-            }
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildBackgroundAudio(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildSfx(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildDoor(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildTriggers(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildNPCS(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildNPCPaths(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildNPCAreas(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildCrowds(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildEnemySpawns(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildParallax(mapCompound, objectsByType)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildMesh(mapCompound, objectsByType, map)));
+            tasks.Add(Task.Run(() => MapPartBuilder.BuildTiles(mapCompound, objectsByType, map, optimizedTilesets)));
 
-            if (audioSfx.Tags.Count > 0)
-            {
-                mapCompound.Add(audioSfx.Tag);
-            }
-            Mode++;
+            // Wait for all tasks to complete
+            Task.WaitAll(tasks.ToArray());
 
-            MapPart doors = new MapPart("doors", true);
-            objectsByType.TryGetValue("door", out List<TmxObjectGroup.TmxObject> doorObjects);
-            int num3 = 0;
-            if (doorObjects != null)
-            {
-                foreach (TmxObjectGroup.TmxObject doorObjs in doorObjects)
-                {
-                    MapPart doorPart = new MapPart(false);
-                    doorPart.Add("x", doorObjs.X);
-                    doorPart.Add("y", doorObjs.Y);
-                    doorPart.Add("w", doorObjs.Width);
-                    doorPart.Add("h", doorObjs.Height);
-                    doorPart.AddFromDictionary<int>("xto", doorObjs.Properties, "xto");
-                    doorPart.AddFromDictionary<int>("yto", doorObjs.Properties, "yto");
-                    doorPart.AddFromDictionary<string>("map", doorObjs.Properties, "map");
-                    doorPart.AddFromDictionary<int>("sfx", doorObjs.Properties, "sfx", 0);
-                    doorPart.AddFromDictionary<short>("flag", doorObjs.Properties, "flag", 0);
-                    doors.Add(doorPart);
-                    num3++;
-                }
-            }
-            if (doors.Tags.Count > 0)
-            {
-                mapCompound.Add(doors.Tag);
-            }
-            Mode++;
-            MapPart triggers = new MapPart("triggers", true);
-            objectsByType.TryGetValue("trigger area", out List<TmxObjectGroup.TmxObject> list5);
-            int num4 = 0;
-            if (list5 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject4 in list5)
-                {
-                    MapPart triggerPart = new MapPart(false);
-                    NbtList coordsList = new NbtList("coords", NbtTagType.Int);
-                    if (tmxObject4.ObjectType == TmxObjectGroup.TmxObjectType.Polygon)
-                    {
-                        using (List<Tuple<int, int>>.Enumerator enumerator3 = tmxObject4.Points.GetEnumerator())
-                        {
-                            while (enumerator3.MoveNext())
-                            {
-                                Tuple<int, int> tuple = enumerator3.Current;
-                                coordsList.Add(new NbtInt(tuple.Item1));
-                                coordsList.Add(new NbtInt(tuple.Item2));
-                            }
-                            goto IL_88B;
-                        }
-                        goto IL_7FF;
-                    }
-                    goto IL_7FF;
-                IL_88B:
-                    triggerPart.Add(coordsList);
-                    triggerPart.AddFromDictionary<string>("scr", tmxObject4.Properties, "script");
-                    triggerPart.AddFromDictionary<short>("flag", tmxObject4.Properties, "flag", 0);
-                    triggerPart.Add("x", tmxObject4.X);
-                    triggerPart.Add("y", tmxObject4.Y);
-                    triggers.Add(triggerPart);
-                    num4++;
-                    continue;
-                IL_7FF:
-                    if (tmxObject4.ObjectType == TmxObjectGroup.TmxObjectType.Basic)
-                    {
-                        coordsList.Add(new NbtInt(0));
-                        coordsList.Add(new NbtInt(0));
-                        coordsList.Add(new NbtInt(tmxObject4.Width));
-                        coordsList.Add(new NbtInt(0));
-                        coordsList.Add(new NbtInt(tmxObject4.Width));
-                        coordsList.Add(new NbtInt(tmxObject4.Height));
-                        coordsList.Add(new NbtInt(0));
-                        coordsList.Add(new NbtInt(tmxObject4.Height));
-                        goto IL_88B;
-                    }
-                    goto IL_88B;
-                }
-            }
-            if (triggers.Tags.Count > 0)
-            {
-                mapCompound.Add(triggers.Tag);
-            }
-            Mode++;
-            MapPart mapPart10 = new MapPart("npcs", true);
-            objectsByType.TryGetValue("npc", out List<TmxObjectGroup.TmxObject> list6);
-            int num5 = 0;
-            if (list6 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject5 in list6)
-                {
-                    MapPart mapPart11 = new MapPart(false);
-                    tmxObject5.Properties.TryGetValue("sprite", out string text2);
-                    if (text2 != null && text2.Trim().Length > 0)
-                    {
-                        mapPart11.Add("x", tmxObject5.X + tmxObject5.Width / 2);
-                        mapPart11.Add("y", tmxObject5.Y + tmxObject5.Height / 2);
-                        mapPart11.AddFromDictionary<string>("spr", tmxObject5.Properties, "sprite", string.Empty);
-                    }
-                    else
-                    {
-                        mapPart11.Add("x", tmxObject5.X);
-                        mapPart11.Add("y", tmxObject5.Y);
-                        mapPart11.Add("w", tmxObject5.Width);
-                        mapPart11.Add("h", tmxObject5.Height);
-                    }
-                    mapPart11.Add("name", tmxObject5.Name);
-                    mapPart11.AddFromDictionary<byte>("dir", tmxObject5.Properties, "direction", 6);
-                    mapPart11.AddFromDictionary<byte>("mov", tmxObject5.Properties, "movement", 0);
-                    mapPart11.AddFromDictionary<float>("spd", tmxObject5.Properties, "speed", 1f);
-                    mapPart11.AddFromDictionary<short>("dst", tmxObject5.Properties, "distance", 20);
-                    mapPart11.AddFromDictionary<short>("dly", tmxObject5.Properties, "delay", 0);
-                    mapPart11.AddFromDictionary<string>("cnstr", tmxObject5.Properties, "constraint", string.Empty);
-                    mapPart11.AddFromDictionary<bool>("cls", tmxObject5.Properties, "collisions", true);
-                    mapPart11.AddFromDictionary<bool>("en", tmxObject5.Properties, "enabled", true);
-                    mapPart11.AddFromDictionary<short>("flag", tmxObject5.Properties, "flag", 0);
-                    mapPart11.AddFromDictionary<bool>("shdw", tmxObject5.Properties, "shadow", true);
-                    mapPart11.AddFromDictionary<bool>("stky", tmxObject5.Properties, "sticky", false);
-                    mapPart11.AddFromDictionary<int>("dpth", tmxObject5.Properties, "depth", int.MinValue);
-                    List<NbtTag> list7 = new List<NbtTag>();
-                    int num6 = 0;
-                    string text3;
-                    while (tmxObject5.Properties.TryGetValue("text" + num6, out text3))
-                    {
-                        string[] array = text3.Split(new char[]
-                        {
-                            ','
-                        });
-                        if (array.Length >= 2)
-                        {
-                            list7.Add(new NbtString(string.Format("t{0}", num6), array[0]));
-                            list7.Add(new NbtShort(string.Format("f{0}", num6), short.Parse(array[1])));
-                        }
-                        num6++;
-                    }
-                    NbtCompound nbtCompound2 = new NbtCompound("entries");
-                    nbtCompound2.AddRange(list7);
-                    mapPart11.Add(nbtCompound2);
-                    List<NbtTag> list8 = new List<NbtTag>();
-                    int num7 = 0;
-                    while (tmxObject5.Properties.TryGetValue("tele" + num7, out text3))
-                    {
-                        string[] array2 = text3.Split(new char[]
-                        {
-                            ','
-                        });
-                        if (array2.Length >= 2)
-                        {
-                            list8.Add(new NbtString(string.Format("t{0}", num7), array2[0]));
-                            list8.Add(new NbtShort(string.Format("f{0}", num7), short.Parse(array2[1])));
-                        }
-                        num7++;
-                    }
-                    NbtCompound nbtCompound3 = new NbtCompound("tele");
-                    nbtCompound3.AddRange(list8);
-                    mapPart11.Add(nbtCompound3);
-                    mapPart10.Add(mapPart11);
-                    num5++;
-                }
-            }
-            if (mapPart10.Tags.Count > 0)
-            {
-                mapCompound.Add(mapPart10.Tag);
-            }
-            Mode++;
-            MapPart mapPart12 = new MapPart("paths", true);
-            objectsByType.TryGetValue("npc path", out List<TmxObjectGroup.TmxObject> list9);
-            int num8 = 0;
-            if (list9 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject6 in list9)
-                {
-                    MapPart mapPart13 = new MapPart(false);
-                    mapPart13.Add("name", tmxObject6.Name);
-                    List<NbtInt> list10 = new List<NbtInt>();
-                    int num9 = 0;
-                    if (tmxObject6.Points != null)
-                    {
-                        using (List<Tuple<int, int>>.Enumerator enumerator3 = tmxObject6.Points.GetEnumerator())
-                        {
-                            while (enumerator3.MoveNext())
-                            {
-                                Tuple<int, int> tuple2 = enumerator3.Current;
-                                list10.Add(new NbtInt(tmxObject6.X + tuple2.Item1));
-                                list10.Add(new NbtInt(tmxObject6.Y + tuple2.Item2));
-                                num9++;
-                            }
-                            goto IL_E84;
-                        }
-                        goto IL_E6D;
-                    IL_E84:
-                        NbtList tag2 = new NbtList("coords", list10, NbtTagType.Int);
-                        mapPart13.Add(tag2);
-                        mapPart12.Add(mapPart13);
-                        num8++;
-                        continue;
-                    }
-                IL_E6D:
-                    throw new Exception(string.Format("NPC Path does not contain points. Make sure you set \"{0}\" to the right type.", tmxObject6.Name));
-                }
-            }
-            if (mapPart12.Tags.Count > 0)
-            {
-                mapCompound.Add(mapPart12.Tag);
-            }
-            Mode++;
-            MapPart mapPart14 = new MapPart("areas", true);
-            objectsByType.TryGetValue("npc area", out List<TmxObjectGroup.TmxObject> list11);
-            int num10 = 0;
-            if (list11 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject7 in list11)
-                {
-                    MapPart mapPart15 = new MapPart(false);
-                    mapPart15.Add("name", tmxObject7.Name);
-                    mapPart15.Add("x", tmxObject7.X);
-                    mapPart15.Add("y", tmxObject7.Y);
-                    mapPart15.Add("w", tmxObject7.Width);
-                    mapPart15.Add("h", tmxObject7.Height);
-                    mapPart14.Add(mapPart15);
-                    num10++;
-                }
-            }
-            if (mapPart14.Tags.Count > 0)
-            {
-                mapCompound.Add(mapPart14.Tag);
-            }
-            Mode++;
-            MapPart mapPart16 = new MapPart("crowds", true);
-            objectsByType.TryGetValue("crowd path", out List<TmxObjectGroup.TmxObject> list12);
-            int num11 = 0;
-            if (list12 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject8 in list12)
-                {
-                    MapPart mapPart17 = new MapPart(false);
-                    mapPart16.Add(mapPart17);
-                    mapPart17.AddFromDictionary<int>("mode", tmxObject8.Properties, "mode");
-                    List<NbtShort> list13 = new List<NbtShort>();
-                    tmxObject8.Properties.TryGetValue("sprites", out string text4);
-                    if (text4 != null)
-                    {
-                        string[] array3 = text4.Split(new char[]
-                        {
-                            ','
-                        });
-                        int num12 = 0;
-                        foreach (string s in array3)
-                        {
-                            list13.Add(new NbtShort(short.Parse(s)));
-                            num12++;
-                        }
-                        NbtList tag3 = new NbtList("sprs", list13, NbtTagType.Short);
-                        mapPart17.Add(tag3);
-                        List<NbtInt> list14 = new List<NbtInt>();
-                        int num13 = 0;
-                        if (tmxObject8.Points != null)
-                        {
-                            using (List<Tuple<int, int>>.Enumerator enumerator3 = tmxObject8.Points.GetEnumerator())
-                            {
-                                while (enumerator3.MoveNext())
-                                {
-                                    Tuple<int, int> tuple3 = enumerator3.Current;
-                                    list14.Add(new NbtInt(tuple3.Item1));
-                                    list14.Add(new NbtInt(tuple3.Item2));
-                                    num13++;
-                                }
-                                goto IL_1191;
-                            }
-                            goto IL_117A;
-                        IL_1191:
-                            NbtList tag4 = new NbtList("coords", list14, NbtTagType.Int);
-                            mapPart17.Add(tag4);
-                            num11++;
-                            continue;
-                        }
-                    IL_117A:
-                        throw new Exception(string.Format("Crowd Path does not contain points. Make sure you set \"{0}\" to the right type.", tmxObject8.Name));
-                    }
-                    throw new MapPartRequirementException(tmxObject8.Name, "sprites");
-                }
-            }
-            if (mapPart16.Tags.Count > 0)
-            {
-                mapCompound.Add(mapPart16.Tag);
-            }
-            Mode++;
-            MapPart mapPart18 = new MapPart("spawns", true);
-            objectsByType.TryGetValue("enemy spawn", out List<TmxObjectGroup.TmxObject> list15);
-            int num14 = 0;
-            if (list15 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject9 in list15)
-                {
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Debug.Log($"Elapsed seconds is {elapsedMs}");
 
-                    NbtCompound nbtCompound4 = new NbtCompound();
-                    mapPart18.Add(nbtCompound4);
-                    Console.WriteLine($"3");
-                    nbtCompound4.Add(new NbtInt("x", tmxObject9.X));
-                    nbtCompound4.Add(new NbtInt("y", tmxObject9.Y));
-                    nbtCompound4.Add(new NbtInt("w", tmxObject9.Width));
-                    nbtCompound4.Add(new NbtInt("h", tmxObject9.Height));
-                    tmxObject9.Properties.TryGetValue("flag", out string s2);
-                    short value = short.Parse(s2);
-                    nbtCompound4.Add(new NbtShort("flag", value));
-                    List<NbtString> list16 = new List<NbtString>();
-                    List<NbtByte> list17 = new List<NbtByte>();
-
-                    IEnumerable<KeyValuePair<string, string>> thing = tmxObject9.Properties.Where(x => x.Key.Contains("enemy"));
-                    foreach (KeyValuePair<string, string> strung in thing)
-                    {
-                        Console.WriteLine($"strung, {strung.Key}, {strung.Value}");
-                        string[] array5 = strung.Value.Split(new char[]
-                        {
-                            ','
-                        });
-                        Console.WriteLine($"Enemy: {array5[0]}");
-                        list16.Add(new NbtString(array5[0]));
-                        list17.Add(new NbtByte(byte.Parse(array5[1])));
-                    }
-                    NbtList newTag = new NbtList("enids", list16, NbtTagType.String);
-                    NbtList newTag2 = new NbtList("enfreqs", list17, NbtTagType.Byte);
-                    nbtCompound4.Add(newTag);
-                    nbtCompound4.Add(newTag2);
-                    num14++;
-                }
-            }
-            if (mapPart18.Tags.Count > 0)
-            {
-                mapCompound.Add(mapPart18.Tag);
-            }
-            Mode++;
-            MapPart mapPart19 = new MapPart("parallax", true);
-            objectsByType.TryGetValue("parallax", out List<TmxObjectGroup.TmxObject> list18);
-            int num16 = 0;
-            if (list18 != null)
-            {
-                foreach (TmxObjectGroup.TmxObject tmxObject10 in list18)
-                {
-                    MapPart mapPart20 = new MapPart(false);
-                    mapPart19.Add(mapPart20);
-                    mapPart20.AddFromDictionary<string>("spr", tmxObject10.Properties, "sprite");
-                    mapPart20.AddFromDictionary<float>("vx", tmxObject10.Properties, "vx", 1f);
-                    mapPart20.AddFromDictionary<float>("vy", tmxObject10.Properties, "vy", 1f);
-                    mapPart20.Add(new NbtFloat("x", tmxObject10.X));
-                    mapPart20.Add(new NbtFloat("y", tmxObject10.Y));
-                    mapPart20.Add(new NbtFloat("w", tmxObject10.Width));
-                    mapPart20.Add(new NbtFloat("h", tmxObject10.Height));
-                    num16++;
-                }
-            }
-            if (mapPart19.Tags.Count > 0)
-            {
-                mapCompound.Add(mapPart19.Tag);
-            }
-            Mode++;
-            NbtList nbtList2 = new NbtList("mesh", NbtTagType.List);
-            List<List<IntPoint>> list19 = BuildMesh();
-            int num17 = 0;
-            foreach (List<IntPoint> list20 in list19)
-            {
-                List<NbtInt> list21 = new List<NbtInt>();
-                foreach (IntPoint intPoint in list20)
-                {
-                    list21.Add(new NbtInt((int)intPoint.X));
-                    list21.Add(new NbtInt((int)intPoint.Y));
-                }
-                NbtList newTag3 = new NbtList(list21, NbtTagType.Int);
-                nbtList2.Add(newTag3);
-                num17++;
-            }
-            if (nbtList2.Count > 0)
-            {
-                mapCompound.Add(nbtList2);
-            }
-            Mode++;
-            NbtList nbtList3 = new NbtList("tiles", NbtTagType.Compound);
-            TileGrouper tileGrouper = new TileGrouper(map);
-            int num18 = 0;
-            List<TileGroup> tileGroups = tileGrouper.FindGroups();
-            foreach (TileGroup tileGroup in tileGroups)
-            {
-                MapPart mapPart21 = new MapPart(false);
-                mapPart21.Add(new NbtInt("depth", tileGroup.depth));
-                mapPart21.Add(new NbtInt("x", tileGroup.x));
-                mapPart21.Add(new NbtInt("y", tileGroup.y));
-                mapPart21.Add(new NbtInt("ox", tileGroup.originX));
-                mapPart21.Add(new NbtInt("rainaway", tileGroup.depth));
-                mapPart21.Add(new NbtInt("w", tileGroup.width / map.TileWidth));
-                int num19 = tileGroup.width / map.TileWidth;
-                int num20 = tileGroup.height / map.TileHeight;
-                int groupTileX = tileGroup.x / map.TileWidth;
-                int groupTileY = tileGroup.y / map.TileHeight;
-                uint[] array6 = new uint[num19 * num20];
-                bool flag = true;
-                OptimizedTileset optimizedTileset2 = optimizedTilesets[map.Tilesets[0].Name];
-                int y;
-                for (y = 0; y < num20; y++)
-                {
-                    int x;
-                    for (x = 0; x < num19; x++)
-                    {
-                        TileGrouper.TileData tileData = tileGroup.tiles.Find((TileGrouper.TileData t) => t.tile.X == x + groupTileX && t.tile.Y == y + groupTileY);
-                        int num21 = y * num19 + x;
-                        if (tileData.tile != null)
-                        {
-                            if (map.Tilesets[0].GetTileById(tileData.tile.Gid - 1) != null)
-                            {
-                                if (map.Tilesets[0].GetTileById(tileData.tile.Gid - 1).Properties != null)
-                                {
-                                    if (map.Tilesets[0].GetTileById(tileData.tile.Gid - 1).Properties.TryGetValue("rainaway", out string _false))
-                                    {
-
-                                        Console.WriteLine("rainaway");
-                                    }
-                                }
-                            }
-
-                            if (tileData.tile.Gid > optimizedTileset2.TranslationTable.Count)
-                            {
-                                Console.WriteLine($"GID '{tileData.tile.Gid}' at tile '{tileData.tile.X},{tileData.tile.Y}' when the maximum is {optimizedTileset2.TranslationTable.Count}");
-                                continue;
-                            }
-
-                            uint num22 = (uint)(optimizedTileset2.Translate(tileData.tile.Gid));
-                            array6[num21] = (tileData.modifier << 16 | num22);
-                        }
-                        else
-                        {
-                            array6[num21] = 0U;
-                        }
-                        flag = (flag && array6[num21] == 0U);
-                    }
-                }
-                if (!flag)
-                {
-                    byte[] array7 = new byte[array6.Length * 4];
-                    Buffer.BlockCopy(array6, 0, array7, 0, array7.Length);
-                    mapPart21.Add("tiles", array7);
-                    nbtList3.Add(mapPart21.Tag);
-                    num18++;
-                }
-            }
-            if (nbtList3.Count > 0)
-            {
-                mapCompound.Add(nbtList3);
-            }
-            Mode++;
             Utility.ConsoleWrite("Saving...                             ", new object[0]);
             string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
             nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
@@ -724,28 +249,7 @@ namespace VEMC
             }
             return dictionary;
         }
-        private TmxObjectGroup ObjectGroupByName(TmxList<TmxObjectGroup> list, string name)
-        {
-            foreach (TmxObjectGroup tmxObjectGroup in list)
-            {
-                if (tmxObjectGroup.Name.ToLower() == name.ToLower())
-                {
-                    return tmxObjectGroup;
-                }
-            }
-            throw new Exception("Object group with name \"" + name + "\" does not exist.");
-        }
-        private bool ObjectGroupExists(TmxList<TmxObjectGroup> list, string name)
-        {
-            foreach (TmxObjectGroup tmxObjectGroup in list)
-            {
-                if (tmxObjectGroup.Name.ToLower() == name.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+
         private TmxMap map;
         private readonly List<Tuple<string, byte>> effectDict = new List<Tuple<string, byte>>
         {

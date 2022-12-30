@@ -74,6 +74,8 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MapPartBuilder.cs" />
+    <Compile Include="Debug.cs" />
     <Compile Include="fNbt\ByteCountingStream.cs" />
     <Compile Include="fNbt\InvalidReaderStateException.cs" />
     <Compile Include="fNbt\NbtBinaryReader.cs" />
