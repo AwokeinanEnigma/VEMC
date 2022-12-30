@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using VEMC;
 
 namespace TiledSharp
 {
@@ -47,7 +48,7 @@ namespace TiledSharp
             {
                 Id = (int?)xObject.Attribute("id") ?? 0;
                 Name = (string)xObject.Attribute("name") ?? String.Empty;
-                Console.WriteLine($"{xObject.Attribute("x").Value}");
+                Debug.Log($"Object name: {Name}");
                 X = ((int)(float)xObject.Attribute("x"));
                 Y = ((int)(float)xObject.Attribute("y"));
                 Width = (int?)xObject.Attribute("width") ?? 0;

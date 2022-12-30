@@ -201,7 +201,7 @@ namespace VEMC
 
 
         public static BuilderMode mode;
-        public static List<MapPart> allMapParts;
+        public static List<MapPart> allMapParts = new List<MapPart>();
 
         public static void BuildSfx(NbtCompound mapCompound, Dictionary<string, List<TmxObjectGroup.TmxObject>> objectsByType)
         {
