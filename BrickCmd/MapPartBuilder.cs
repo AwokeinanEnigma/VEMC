@@ -815,6 +815,8 @@ namespace VEMC
 
                     // Add the sprite, x and y velocity, and position and size of the parallax object as tags
                     parallaxData.AddFromDictionary<string>("spr", parallaxObject.Properties, "sprite");
+                    parallaxData.AddFromDictionary<int>("shdrmde", parallaxObject.Properties, "shaderMode");
+
                     parallaxData.AddFromDictionary<float>("vx", parallaxObject.Properties, "vx", 1f);
                     parallaxData.AddFromDictionary<float>("vy", parallaxObject.Properties, "vy", 1f);
                     parallaxData.Add(new NbtFloat("x", parallaxObject.X));

@@ -5,6 +5,7 @@ using LibTessDotNet;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 
 namespace VEMC
 {
@@ -23,16 +24,24 @@ namespace VEMC
 
         public void AddPath(int x, int y, Point[] points)
         {
-            List<IntPoint> list = new List<IntPoint>();
-            int num = points.Length;
-            for (int i = 0; i < num; i++)
-            {
-                IntPoint item;
+            // Create an empty list to store the points
+            List<IntPoint> pointList = new List<IntPoint>();
 
-                item = new IntPoint(x + points[i].X, y + points[i].Y);
-                list.Add(item);
+            // Get the number of points in the input array
+            int numPoints = points.Length;
+
+            // Iterate through each point in the input array
+            for (int i = 0; i < numPoints; i++)
+            {
+                // Create a new IntPoint at the specified offset from the input point
+                IntPoint offsetPoint = new IntPoint(x + points[i].X, y + points[i].Y);
+
+                // Add the point to the list
+                pointList.Add(offsetPoint);
             }
-            AddPath(list);
+
+            // Add the list of points to the path
+            AddPath(pointList);
         }
 
         public void AddPath(IntPoint[] points)
@@ -57,40 +66,39 @@ namespace VEMC
         public void Simplify()
         {
             Tess tess = new Tess();
-            int count = solution.Count;
-            for (int i = 0; i < count; i++)
+
+            // Add all the contours to the tessellator
+            foreach (var contour in solution)
             {
-                List<IntPoint> list = solution[i];
-                int count2 = list.Count;
-                ContourVertex[] array = new ContourVertex[count2];
-                for (int j = 0; j < count2; j++)
+                var contourVertices = contour.Select(point => new ContourVertex
                 {
-                    ContourVertex[] array2 = array;
-                    int num = j;
-                    ContourVertex contourVertex = default(ContourVertex);
-                    Vec3 position = default(Vec3);
-                    position.X = list[j].X;
-                    position.Y = list[j].Y;
-                    contourVertex.Position = position;
-                    array2[num] = contourVertex;
-                }
-                tess.AddContour(array);
+                    Position = new Vec3
+                    {
+                        X = point.X,
+                        Y = point.Y
+                    }
+                }).ToArray();
+                tess.AddContour(contourVertices);
             }
-            tess.Tessellate((WindingRule)2, 0, 3);
+
+            // Tessellate the contours
+            tess.Tessellate(WindingRule.Positive, 0, 3);
+
+            // Clear the original solution
             solution.Clear();
-            int elementCount = tess.ElementCount;
-            for (int k = 0; k < elementCount; k++)
+
+            // Iterate through all the tessellated elements and add them to the solution
+            for (int i = 0; i < tess.ElementCount; i++)
             {
-                Vec3 position2 = tess.Vertices[tess.Elements[k * 3]].Position;
-                Vec3 position3 = tess.Vertices[tess.Elements[k * 3 + 1]].Position;
-                Vec3 position4 = tess.Vertices[tess.Elements[k * 3 + 2]].Position;
-                List<IntPoint> list2 = new List<IntPoint>
-                {
-                    new IntPoint(position2.X, position2.Y),
-                    new IntPoint(position3.X, position3.Y),
-                    new IntPoint(position4.X, position4.Y)
-                };
-                solution.Add(list2);
+                Vec3 vertex1 = tess.Vertices[tess.Elements[i * 3]].Position;
+                Vec3 vertex2 = tess.Vertices[tess.Elements[i * 3 + 1]].Position;
+                Vec3 vertex3 = tess.Vertices[tess.Elements[i * 3 + 2]].Position;
+                solution.Add(new List<IntPoint>
+    {
+        new IntPoint(vertex1.X, vertex1.Y),
+        new IntPoint(vertex2.X, vertex2.Y),
+        new IntPoint(vertex3.X, vertex3.Y)
+    });
             }
         }
 

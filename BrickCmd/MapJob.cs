@@ -35,16 +35,14 @@ namespace VEMC
             CheckProperty("name");
             CheckProperty("title");
             CheckProperty("subtitle");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Map passed first few checks.");
-            Console.ResetColor();
+
+            Debug.Log("Map passed first few checks.");
 
             if (map.Tilesets.Count > 1)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("HEAR YE HEAR YE");
-                Console.WriteLine("THIS MAP HAS MORE THAN ONE TILESET");
-                Console.WriteLine("THIS IS NOT ALLOWED");
+                Debug.LogWarning("HEAR YE HEAR YE");
+                Debug.LogWarning("THIS MAP HAS MORE THAN ONE TILESET");
+                Debug.LogWarning("THIS IS NOT ALLOWED");
                 throw new Exception("Map had more than two tilesets.");
 
             }
@@ -70,18 +68,35 @@ namespace VEMC
                 {
                     if (tmxTileset.Image != null)
                     {
+                        // Get the file name of the tileset image, without the extension
                         string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(tmxTileset.Image.Source);
+
+                        // Get the first global ID of the tileset
                         int firstGid = tmxTileset.FirstGid;
+
+                        // Optimize the tileset
                         OptimizedTileset optimizedTileset = TilesetOptimizer.Optimize(tmxTileset);
+
+                        // Add the optimized tileset to the dictionary using its name as the key
                         tilesetDict.Add(tmxTileset.Name, optimizedTileset);
+
+                        // Add a new compound tag to the main compound, with the file name and first global ID as sub-tags
                         compound.Add(new NbtCompound
-                        {
-                            new NbtString("ts", fileNameWithoutExtension),
-                            new NbtInt("tid", firstGid)
-                        });
+{
+    new NbtString("ts", fileNameWithoutExtension),
+    new NbtInt("tid", firstGid)
+});
+
+                        // Get the transparency color of the tileset image
                         TmxColor trans = tmxTileset.Image.Trans;
-                        Color.FromArgb(trans.R, trans.G, trans.B);
+
+                        // Convert the transparency color to a System.Drawing.Color object
+                        Color transparencyColor = Color.FromArgb(trans.R, trans.G, trans.B);
+
+                        // Create a .mtdat file for the tileset
                         NbtFile tileSetDat = TilesetDatBuilder.Build(tmxTileset, optimizedTileset);
+
+                        // Save the .mtdat file to the specified directory
                         string fileName = Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets\\" + fileNameWithoutExtension + ".mtdat";
                         tileSetDat.SaveToFile(fileName, NbtCompression.GZip);
                     }
@@ -134,9 +149,10 @@ namespace VEMC
             tasks.Add(Task.Run(() => MapPartBuilder.BuildCrowds(mapCompound, objectsByType)));
             tasks.Add(Task.Run(() => MapPartBuilder.BuildEnemySpawns(mapCompound, objectsByType)));
             tasks.Add(Task.Run(() => MapPartBuilder.BuildParallax(mapCompound, objectsByType)));
-            tasks.Add(Task.Run(() => MapPartBuilder.BuildMesh(mapCompound, objectsByType, map)));
-            tasks.Add(Task.Run(() => MapPartBuilder.BuildTiles(mapCompound, objectsByType, map, optimizedTilesets)));
-
+            
+            MapPartBuilder.BuildMesh(mapCompound, objectsByType, map);
+            MapPartBuilder.BuildTiles(mapCompound, objectsByType, map, optimizedTilesets);
+            
             // Wait for all tasks to complete
             Task.WaitAll(tasks.ToArray());
 
@@ -144,110 +160,46 @@ namespace VEMC
             var elapsedMs = watch.ElapsedMilliseconds;
             Debug.Log($"Elapsed seconds is {elapsedMs}");
 
-            Utility.ConsoleWrite("Saving...                             ", new object[0]);
             string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
             nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
+            Utility.ConsoleWrite("Saved. Press enter to exit.");
+
+            Console.ReadLine();
         }
-        public List<List<IntPoint>> BuildMesh()
-        {
-            int height = map.Height;
-            int width = map.Width;
-            TmxTileset tileset = map.Tilesets[0];
-            int num = width * height * map.Layers.Count;
-            int num2 = 0;
-            MeshBuilder meshBuilder = new MeshBuilder();
-            string text = null;
-            for (int i = map.Layers.Count - 1; i >= 0; i--)
-            {
-                string name = map.Layers[i].Name;
-                int count = map.Layers[i].Tiles.Count;
-                for (int j = 0; j < count; j++)
-                {
-                    TmxLayerTile tmxLayerTile = map.Layers[i].Tiles[j];
-                    int gid = tmxLayerTile.Gid - 1;
-                    int x = tmxLayerTile.X;
-                    int y = tmxLayerTile.Y;
-                    TmxTilesetTile tileById = tileset.GetTileById(gid);
-                    if (tileById != null)
-                    {
-                        int num3 = 0;
-                        tileById.Properties.TryGetValue("solidity", out text);
-                        if (text != null)
-                        {
-                            num3 = int.Parse(text);
-                        }
-                        if (num3 > 0)
-                        {
-                            meshBuilder.AddPath(x * map.TileWidth, y * map.TileHeight, collisionMasks[num3]);
-                        }
-                    }
-                    num2++;
-                    if (num2 % 100 == 0)
-                    {
-                        Utility.ConsoleWrite("Building collision mesh from \"{0}\" ({1}%)", new object[]
-                        {
-                            name,
-                            Math.Round(num2 / (double)num * 100.0)
-                        });
-                    }
-                }
-            }
-            Utility.ConsoleWrite("Simplifying collision mesh...                                     ", new object[0]);
-            meshBuilder.Simplify();
-            return meshBuilder.Solution;
-        }
-        private uint CheckGraphicsManifest(string filename)
-        {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-            string path = Utility.AppDirectory + "\\Resources\\Graphics\\manifest.txt";
-            FileStream fileStream = new FileStream(path, FileMode.Open);
-            StreamReader streamReader = new StreamReader(fileStream);
-            int num = -1;
-            int num2 = 0;
-            while (!streamReader.EndOfStream)
-            {
-                string a = streamReader.ReadLine();
-                if (a == fileNameWithoutExtension)
-                {
-                    num = num2;
-                    break;
-                }
-                num2++;
-            }
-            fileStream.Close();
-            if (num == -1)
-            {
-                fileStream = new FileStream(path, FileMode.Append);
-                StreamWriter streamWriter = new StreamWriter(fileStream);
-                streamWriter.WriteLine(fileNameWithoutExtension);
-                streamWriter.Close();
-                num = File.ReadLines(path).Count<string>() - 1;
-                Console.WriteLine(filename + " was added to the graphics manifest.");
-            }
-            return (uint)num;
-        }
+
         private Dictionary<string, List<TmxObjectGroup.TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
         {
-            Dictionary<string, List<TmxObjectGroup.TmxObject>> dictionary = new Dictionary<string, List<TmxObjectGroup.TmxObject>>();
+            // Create a dictionary to store the objects, grouped by type
+            Dictionary<string, List<TmxObjectGroup.TmxObject>> objectsByType = new Dictionary<string, List<TmxObjectGroup.TmxObject>>();
+
+            // Iterate through the object groups
             foreach (TmxObjectGroup tmxObjectGroup in groupList)
             {
+                // Iterate through the objects in the group
                 foreach (TmxObjectGroup.TmxObject tmxObject in tmxObjectGroup.Objects)
                 {
-                    string key = tmxObject.Type.ToLower();
-                    List<TmxObjectGroup.TmxObject> list;
-                    if (dictionary.ContainsKey(key))
+                    // Get the lowercase type of the object
+                    string type = tmxObject.Type.ToLower();
+
+                    // Get the list of objects for this type, or create a new one if it doesn't exist
+                    List<TmxObjectGroup.TmxObject> objectList;
+                    if (objectsByType.ContainsKey(type))
                     {
-                        list = dictionary[key];
+                        objectList = objectsByType[type];
                     }
                     else
                     {
-                        list = new List<TmxObjectGroup.TmxObject>();
-                        dictionary.Add(key, list);
+                        objectList = new List<TmxObjectGroup.TmxObject>();
+                        objectsByType.Add(type, objectList);
                     }
-                    list.Add(tmxObject);
+
+                    // Add the object to the list
+                    objectList.Add(tmxObject);
                 }
             }
-            return dictionary;
+
+            // Return the dictionary of objects by type
+            return objectsByType;
         }
 
         private TmxMap map;
