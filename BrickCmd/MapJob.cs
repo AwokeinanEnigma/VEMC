@@ -17,8 +17,27 @@ namespace VEMC
     {
         private TmxMap map;
 
+        public void OpenAndProcess(string filename)
+        {
+            if (!filename.Contains("tmx"))
+            {
+                Debug.LogError($"The file '{Path.GetFileName(filename)}' isn't a .TMX file, try again.", false);
+                return;
+            }
+
+            map = new TmxMap(filename);
+            Process();
+        }
+
+
         public void Open(string filename)
         {
+            if (!filename.Contains("tmx"))
+            {
+                Debug.LogError($"The file {Path.GetFileName(filename)} isn't a TMX file, try again.", false);
+                return;
+            }
+
             map = new TmxMap(filename);
         }
         public void CheckProperty(string property)
@@ -91,10 +110,18 @@ namespace VEMC
 
                         // Create a .mtdat file for the tileset
                         NbtFile tileSetDat = TilesetDatBuilder.Build(tmxTileset, optimizedTileset);
-
-                        // Save the .mtdat file to the specified directory
-                        string fileName = Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets\\" + fileNameWithoutExtension + ".mtdat";
-                        tileSetDat.SaveToFile(fileName, NbtCompression.GZip);
+                        if (!Program.CopyTo)
+                        {
+                            // Save the .mtdat file to the specified directory
+                            string fileName = Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets\\" + fileNameWithoutExtension + ".mtdat";
+                            tileSetDat.SaveToFile(fileName, NbtCompression.GZip);
+                        }
+                        else
+                        {
+                            // Save the .mtdat file to the specified directory
+                            string fileName = Program.CopyToPath + "\\Data\\Graphics\\MapTilesets\\" + fileNameWithoutExtension + ".mtdat";
+                            tileSetDat.SaveToFile(fileName, NbtCompression.GZip);
+                        }
                     }
                 }
             }
@@ -153,8 +180,15 @@ namespace VEMC
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
 
-            string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
-            nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
+            if (!Program.CopyTo)
+            {
+                string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
+                nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
+            }
+            else {
+                string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Program.CopyToPath, map.Properties["name"]);
+                nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
+            }
             Utility.ConsoleWrite($"Saved. Operation took {elapsedMs/1000} seconds.");
         }
 

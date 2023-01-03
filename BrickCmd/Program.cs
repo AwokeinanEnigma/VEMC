@@ -7,6 +7,8 @@ namespace VEMC
 {
     internal class Program
     {
+        public static bool CopyTo;
+        public static string CopyToPath;
         private static void Main(string[] args)
         {
             Debug.Initialize();
@@ -15,6 +17,13 @@ namespace VEMC
             file.Load(Utility.AppDirectory + $"\\config.ini");
             string redirectPath = file["basicData"]["makeAtPath"].ToString();
 
+            // making note of this
+            // if CopyTo is false, then we have no place to copy files to
+            // if CopyTo is true, then we have a place to copy files to
+            CopyTo = !redirectPath.Contains("<empty>");
+            Debug.Log(CopyTo ? $"Copying map files to {redirectPath}" : "The path to copy map files to is empty. You should try setting it!" );
+          
+            CopyToPath = redirectPath;
 
 
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -25,21 +34,47 @@ namespace VEMC
             Console.ResetColor();
             Console.WriteLine("Builds Violet Engine map files from Tiled TMX files");
             Console.WriteLine();
-            if (!Directory.Exists(Utility.AppDirectory + "\\Data"))
+
+            // if we have no path to copy to
+            if (!CopyTo)
             {
-                Directory.CreateDirectory(Utility.AppDirectory + "\\Data\\Maps");
-                Directory.CreateDirectory(Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets");
-            }
-            else
-            {
-                if (!Directory.Exists(Utility.AppDirectory + "\\Data\\Maps"))
+                if (!Directory.Exists(Utility.AppDirectory + "\\Data"))
                 {
                     Directory.CreateDirectory(Utility.AppDirectory + "\\Data\\Maps");
-                }
-                if (!Directory.Exists(Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets"))
-                {
                     Directory.CreateDirectory(Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets");
                 }
+                else
+                {
+                    if (!Directory.Exists(Utility.AppDirectory + "\\Data\\Maps"))
+                    {
+                        Directory.CreateDirectory(Utility.AppDirectory + "\\Data\\Maps");
+                    }
+                    if (!Directory.Exists(Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets"))
+                    {
+                        Directory.CreateDirectory(Utility.AppDirectory + "\\Data\\Graphics\\MapTilesets");
+                    }
+                }
+            }
+            // if we have a path to copy to
+            else
+            {
+                if (!Directory.Exists(CopyToPath + "\\Data"))
+                {
+                    Directory.CreateDirectory(CopyToPath + "\\Data\\Maps");
+                    Directory.CreateDirectory(CopyToPath + "\\Data\\Graphics\\MapTilesets");
+                }
+                else
+                {
+                    if (!Directory.Exists(CopyToPath + "\\Data\\Maps"))
+                    {
+                        Directory.CreateDirectory(CopyToPath + "\\Data\\Maps");
+                    }
+                    if (!Directory.Exists(CopyToPath + "\\Data\\Graphics\\MapTilesets"))
+                    {
+                        Directory.CreateDirectory(CopyToPath + "\\Data\\Graphics\\MapTilesets");
+                    }
+                }
+
             }
             if (args.Length == 0)
             {
@@ -61,21 +96,21 @@ namespace VEMC
         }
         private static void Process(string[] files)
         {
-            for (int i = 0; i < files.Length; i++) {
+            for (int i = 0; i < files.Length; i++)
+            {
                 string text = files[i];
                 string fileName = Path.GetFileName(text);
 
                 MapJob mapJob = new MapJob();
                 try
                 {
-
-
-
-                    mapJob.Open(text);
                     Console.ForegroundColor = ConsoleColor.Yellow;
+                    
                     Console.WriteLine("Processing \"" + fileName + "\"");
+                   
                     Console.ResetColor();
-                    mapJob.Process();
+                    
+                    mapJob.OpenAndProcess(text);
                 }
                 catch (Exception e)
                 {
