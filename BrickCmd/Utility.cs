@@ -12,6 +12,7 @@ namespace VEMC
         public static string AppDirectory
         {
             get
+                
             {
                 string directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
                 return directoryName.Substring(6);

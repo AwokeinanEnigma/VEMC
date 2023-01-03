@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{021C7C3B-0E16-4A29-BCE8-0725AFAE0E5B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VEMC</RootNamespace>
     <AssemblyName>VEMC</AssemblyName>
@@ -82,10 +82,11 @@
     <Compile Include="Geometry\Polygon.cs" />
     <Compile Include="MapBuildException.cs" />
     <Compile Include="MapJob.cs" />
-    <Compile Include="MapLayerException.cs" />
+    <Compile Include="PartBuilders\AudioBuilder.cs" />
+    <Compile Include="PartBuilders\TerrainBuilder.cs" />
     <Compile Include="MapPropertyException.cs" />
     <Compile Include="MeshBuilder.cs" />
-    <Compile Include="OptimizedTileset.cs" />
+    <Compile Include="Tiles\OptimizedTileset.cs" />
     <Compile Include="Parts\MapPart.cs" />
     <Compile Include="Parts\MapPartConversionException.cs" />
     <Compile Include="Parts\MapPartParameterException.cs" />
@@ -120,6 +121,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Tiles\config.txt" />
     <Content Include="violet.ico" />
   </ItemGroup>
   <ItemGroup>

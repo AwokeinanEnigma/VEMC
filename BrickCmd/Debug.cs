@@ -21,8 +21,7 @@ namespace VEMC
             Warning,
             Info,
             Debug,
-            Lua,
-            Engine,
+            Green,
             Trace
         }
 
@@ -34,8 +33,7 @@ namespace VEMC
             [LogLevel.Warning] = ConsoleColor.Yellow,
             [LogLevel.Info] = ConsoleColor.White,
             [LogLevel.Debug] = ConsoleColor.Gray,
-            [LogLevel.Lua] = ConsoleColor.Magenta,
-            [LogLevel.Engine] = ConsoleColor.Green,
+            [LogLevel.Green] = ConsoleColor.Green,
             [LogLevel.Trace] = ConsoleColor.Cyan,
         };
 
@@ -59,12 +57,12 @@ namespace VEMC
         /// <param name="message">The message to display.</param>
         /// <param name="callerFilePath">Ignore this.</param>
         /// <param name="callerLineNumber">Ignore this.</param>
-        public static void LogEngine(
+        public static void LogGreen(
         object message,
         [CallerFilePath] string callerFilePath = "",
         [CallerLineNumber] int callerLineNumber = 0)
         {
-            LogInternal(LogLevel.Engine, message, callerFilePath, callerLineNumber);
+            LogInternal(LogLevel.Green, message, callerFilePath, callerLineNumber);
         }
 
         /// <summary>
@@ -138,20 +136,6 @@ namespace VEMC
         }
 
         /// <summary>
-        /// Used to send Lua info messages to the console.
-        /// </summary>
-        /// <param name="message">The message to display.</param>
-        /// <param name="callerFilePath">Ignore this.</param>
-        /// <param name="callerLineNumber">Ignore this.</param>
-        public static void LogLua(
-        object message,
-        [CallerFilePath] string callerFilePath = "",
-        [CallerLineNumber] int callerLineNumber = 0)
-        {
-            LogInternal(LogLevel.Lua, message, callerFilePath, callerLineNumber);
-        }
-
-        /// <summary>
         /// Used to send debug messages to the console.
         /// </summary>
         /// <param name="message">The message to display.</param>
@@ -201,7 +185,7 @@ namespace VEMC
 
         public static void Initialize()
         {
-            SetVerbosity(LogLevel.Engine);
+            SetVerbosity(LogLevel.Green);
         }
     }
 }

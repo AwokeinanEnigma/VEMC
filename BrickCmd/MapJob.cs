@@ -8,17 +8,15 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TiledSharp;
+using VEMC.PartBuilders;
 using VEMC.Parts;
 
 namespace VEMC
 {
     public class MapJob
     {
-        public int Mode { get; private set; }
-        public MapJob()
-        {
-            Mode = 0;
-        }
+        private TmxMap map;
+
         public void Open(string filename)
         {
             map = new TmxMap(filename);
@@ -32,21 +30,19 @@ namespace VEMC
         }
         public void ValidateMap()
         {
-            CheckProperty("name");
-            CheckProperty("title");
-            CheckProperty("subtitle");
-
-            Debug.Log("Map passed first few checks.");
-
             if (map.Tilesets.Count > 1)
             {
                 Debug.LogWarning("HEAR YE HEAR YE");
                 Debug.LogWarning("THIS MAP HAS MORE THAN ONE TILESET");
                 Debug.LogWarning("THIS IS NOT ALLOWED");
                 throw new Exception("Map had more than two tilesets.");
-
             }
 
+            CheckProperty("name");
+            CheckProperty("title");
+            CheckProperty("subtitle");
+
+            Debug.Log("Map passed first few checks.");
         }
         public void Process()
         {
@@ -103,8 +99,6 @@ namespace VEMC
                 }
             }
 
-            Utility.Hash(map.Properties["name"]);
-
             Dictionary<string, List<TmxObjectGroup.TmxObject>> objectsByType = GetObjectsByType(map.ObjectGroups);
             NbtFile nbtFile = new NbtFile();
 
@@ -158,13 +152,10 @@ namespace VEMC
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
-            Debug.Log($"Elapsed seconds is {elapsedMs}");
 
             string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
             nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
-            Utility.ConsoleWrite("Saved. Press any key to exit.");
-
-            Console.ReadKey();
+            Utility.ConsoleWrite($"Saved. Operation took {elapsedMs/1000} seconds.");
         }
 
         private Dictionary<string, List<TmxObjectGroup.TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
@@ -201,185 +192,5 @@ namespace VEMC
             // Return the dictionary of objects by type
             return objectsByType;
         }
-
-        private TmxMap map;
-        private readonly List<Tuple<string, byte>> effectDict = new List<Tuple<string, byte>>
-        {
-            new Tuple<string, byte>("none", 0),
-            new Tuple<string, byte>("rain", 1),
-            new Tuple<string, byte>("storm", 2),
-            new Tuple<string, byte>("snow", 3),
-            new Tuple<string, byte>("underwater", 4),
-            new Tuple<string, byte>("lighting", 5)
-        };
-        private readonly Dictionary<int, Point[]> collisionMasks = new Dictionary<int, Point[]>
-        {
-            {
-                1,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                2,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(8, 0),
-                    new Point(8, 8)
-                }
-            },
-            {
-                3,
-                new Point[]
-                {
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                4,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(8, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                5,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(8, 0),
-                    new Point(0, 8)
-                }
-            },
-            {
-                6,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(8, 0),
-                    new Point(7, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                7,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(7, 0),
-                    new Point(6, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                8,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(6, 0),
-                    new Point(5, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                9,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(4, 0),
-                    new Point(3, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                10,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(3, 0),
-                    new Point(2, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                11,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(2, 0),
-                    new Point(1, 8),
-                    new Point(0, 8)
-                }
-            },
-            {
-                12,
-                new Point[]
-                {
-                    new Point(0, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(1, 8)
-                }
-            },
-            {
-                13,
-                new Point[]
-                {
-                    new Point(1, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(2, 8)
-                }
-            },
-            {
-                14,
-                new Point[]
-                {
-                    new Point(2, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(3, 8)
-                }
-            },
-            {
-                15,
-                new Point[]
-                {
-                    new Point(4, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(5, 8)
-                }
-            },
-            {
-                16,
-                new Point[]
-                {
-                    new Point(5, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(6, 8)
-                }
-            },
-            {
-                17,
-                new Point[]
-                {
-                    new Point(6, 0),
-                    new Point(8, 0),
-                    new Point(8, 8),
-                    new Point(7, 8)
-                }
-            }
-        };
     }
 }

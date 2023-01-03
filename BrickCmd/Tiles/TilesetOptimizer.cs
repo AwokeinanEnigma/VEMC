@@ -10,20 +10,35 @@ namespace VEMC
 {
     internal class TilesetOptimizer
     {
+        private const int TILE_SIZE = 8;
+        private static readonly int[] TILESET_SIZES = new int[]
+        {
+            32,
+            64,
+            128,
+            256,
+            384,
+            480,
+            512,
+            640,
+            768,
+            1024
+        };
+
         public static OptimizedTileset Optimize(TmxTileset tset)
         {
             // Initialize an OptimizedTileset object
             OptimizedTileset optimizedTileset = new OptimizedTileset();
 
             // Load the image file into the optimizedTileset object and get the size of the image
-            Point imageSize = TilesetOptimizer.LoadImage(tset.Image.Source, tset.Image.Trans, out List<Color> colors, out byte[] pixelColors);
+            Point imageSize = LoadImage(tset.Image.Source, tset.Image.Trans, out List<Color> colors, out byte[] pixelColors);
             int imageWidth = imageSize.X;
             int imageHeight = imageSize.Y;
 
-            // Check that the dimensions of the image are multiples of 8
-            if (imageWidth % 8 != 0 || imageHeight % 8 != 0)
+            // Check that the dimensions of the image are multiples of TILE_SIZE
+            if (imageWidth % TILE_SIZE != 0 || imageHeight % TILE_SIZE != 0)
             {
-                string message = string.Format("The dimensions of the tileset image \"{0}\" are not multiples of {1}. Tiles are {1}x{1}, so this size doesn't make sense. Expand the tileset image to the next multiple of {1} and try again.", tset.Image.Source, 8);
+                string message = string.Format("The dimensions of the tileset image \"{0}\" are not multiples of {1}. Tiles are {1}x{1}, so this size doesn't make sense. Expand the tileset image to the next multiple of {1} and try again.", tset.Image.Source, TILE_SIZE);
                 throw new MapBuildException(message);
             }
 
@@ -33,21 +48,21 @@ namespace VEMC
             int nextTileId = 1;
 
             // Iterate through the tiles in the image
-            for (int y = 0; y < imageHeight; y += 8)
+            for (int y = 0; y < imageHeight; y += TILE_SIZE)
             {
-                for (int x = 0; x < imageWidth; x += 8)
+                for (int x = 0; x < imageWidth; x += TILE_SIZE)
                 {
                     // Calculate the tile's first global identifier (gid)
-                    int tileGid = tset.FirstGid + (y / 8 * (imageWidth / 8)) + (x / 8);
+                    int tileGid = tset.FirstGid + (y / TILE_SIZE * (imageWidth / TILE_SIZE)) + (x / TILE_SIZE);
 
                     // Initialize an array to store the tile data
                     byte[] tileDataArray = new byte[64];
                     int dataIndex = 0;
 
                     // Iterate through the pixels in the tile and add their colors to the tile data array
-                    for (int tileY = y; tileY < y + 8; tileY++)
+                    for (int tileY = y; tileY < y + TILE_SIZE; tileY++)
                     {
-                        for (int tileX = x; tileX < x + 8; tileX++)
+                        for (int tileX = x; tileX < x + TILE_SIZE; tileX++)
                         {
                             int pixelIndex = tileY * imageWidth + tileX;
                             if (pixelIndex < pixelColors.Length)
@@ -81,17 +96,17 @@ namespace VEMC
             optimizedTileset.Palette = colors.ToArray();
 
             // Declare variable for the size of the next tile
-            int nextTileSize = nextTileId * 8 * 8;
+            int nextTileSize = nextTileId * TILE_SIZE * TILE_SIZE;
 
             // Declare variable to store the size of the optimized tileset
             int optimizedTilesetSize = 0;
 
             // Find the size of the optimized tileset that can hold all the tiles
             // Iterate through all the possible sizes in the TILESET_SIZES array
-            for (int i = 0; i < TilesetOptimizer.TILESET_SIZES.Length; i++)
+            for (int i = 0; i < TILESET_SIZES.Length; i++)
             {
                 // If the size of the next tile fits in the current size of the optimized tileset
-                if (nextTileSize < TilesetOptimizer.TILESET_SIZES[i] * TilesetOptimizer.TILESET_SIZES[i])
+                if (nextTileSize < TilesetOptimizer.TILESET_SIZES[i] * TILESET_SIZES[i])
                 {
                     // Store the size of the optimized tileset
                     optimizedTilesetSize = TilesetOptimizer.TILESET_SIZES[i];
@@ -110,17 +125,17 @@ namespace VEMC
                 for (int i = 0; i < nextTileId - 1; i++)
                 {
                     // Calculate the x position of the tile in the optimized tileset
-                    int xPos = i * 8 % optimizedTilesetSize;
+                    int xPos = i * TILE_SIZE % optimizedTilesetSize;
                     // Calculate the y position of the tile in the optimized tileset
-                    int yPos = i * 8 / optimizedTilesetSize * 8;
+                    int yPos = i * TILE_SIZE / optimizedTilesetSize * TILE_SIZE;
 
                     // Iterate through all the pixels in the tile
                     for (int j = 0; j < 64; j++)
                     {
                         // Calculate the x position of the pixel within the tile
-                        int pixelXPos = j % 8;
+                        int pixelXPos = j % TILE_SIZE;
                         // Calculate the y position of the pixel within the tile
-                        int pixelYPos = j / 8;
+                        int pixelYPos = j / TILE_SIZE;
                         // Calculate the index of the pixel in the indexedImageData array
                         int pixelIndex = (yPos + pixelYPos) * optimizedTilesetSize + (xPos + pixelXPos);
                         // Set the pixel value in the indexedImageData array
@@ -138,6 +153,7 @@ namespace VEMC
 
             throw new InvalidOperationException(string.Format("The tileset is too large to be stored in a {0}x{0} pixel image.", TilesetOptimizer.TILESET_SIZES[TilesetOptimizer.TILESET_SIZES.Length - 1]));
         }
+
         private static Point LoadImage(string file, TmxColor transColor, out List<Color> colors, out byte[] pixelcols)
         {
             // Load the image file into a Bitmap object
@@ -201,22 +217,9 @@ namespace VEMC
             else
             {
                 // Throw an exception if the image is not in 32bppARGB format
-                throw new MapBuildException("Tileset image is not 32bppARGB, but it should be at this point. Bug Enigma!");
+                throw new MapBuildException("Tileset image is not 32bppARGB, but it should be. Bug Enigma!");
             }
         }
-        private const int TILE_SIZE = 8;
-        private static readonly int[] TILESET_SIZES = new int[]
-        {
-            32,
-            64,
-            128,
-            256,
-            384,
-            480,
-            512,
-            640,
-            768,
-            1024
-        };
+
     }
 }
