@@ -50,6 +50,8 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>false</Optimize>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -74,45 +76,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="fNbt.cs" />
     <Compile Include="MapPartBuilder.cs" />
     <Compile Include="Debug.cs" />
-    <Compile Include="fNbt\ByteCountingStream.cs" />
-    <Compile Include="fNbt\InvalidReaderStateException.cs" />
-    <Compile Include="fNbt\NbtBinaryReader.cs" />
-    <Compile Include="fNbt\NbtBinaryWriter.cs" />
-    <Compile Include="fNbt\NbtByte.cs" />
-    <Compile Include="fNbt\NbtByteArray.cs" />
-    <Compile Include="fNbt\NbtCompound.cs" />
-    <Compile Include="fNbt\NbtCompression.cs" />
-    <Compile Include="fNbt\NbtDouble.cs" />
-    <Compile Include="fNbt\NbtFile.cs" />
-    <Compile Include="fNbt\NbtFloat.cs" />
-    <Compile Include="fNbt\NbtFormatException.cs" />
-    <Compile Include="fNbt\NbtInt.cs" />
-    <Compile Include="fNbt\NbtIntArray.cs" />
-    <Compile Include="fNbt\NbtList.cs" />
-    <Compile Include="fNbt\NbtLong.cs" />
-    <Compile Include="fNbt\NbtParseState.cs" />
-    <Compile Include="fNbt\NbtReader.cs" />
-    <Compile Include="fNbt\NbtReaderNode.cs" />
-    <Compile Include="fNbt\NbtShort.cs" />
-    <Compile Include="fNbt\NbtString.cs" />
-    <Compile Include="fNbt\NbtTag.cs" />
-    <Compile Include="fNbt\NbtTagType.cs" />
-    <Compile Include="fNbt\NbtWriter.cs" />
-    <Compile Include="fNbt\NbtWriterNode.cs" />
-    <Compile Include="fNbt\TagSelector.cs" />
-    <Compile Include="fNbt\ZLibStream.cs" />
     <Compile Include="Geometry\Polygon.cs" />
-    <Compile Include="GpcWrapper\GpcOperation.cs" />
-    <Compile Include="GpcWrapper\GpcWrapper.cs" />
-    <Compile Include="GpcWrapper\Polygon.cs" />
-    <Compile Include="GpcWrapper\Tristrip.cs" />
-    <Compile Include="GpcWrapper\Vertex.cs" />
-    <Compile Include="GpcWrapper\VertexList.cs" />
-    <Compile Include="JetBrains\Annotations\CanBeNullAttribute.cs" />
-    <Compile Include="JetBrains\Annotations\NotNullAttribute.cs" />
-    <Compile Include="JetBrains\Annotations\PureAttribute.cs" />
     <Compile Include="MapBuildException.cs" />
     <Compile Include="MapJob.cs" />
     <Compile Include="MapLayerException.cs" />
@@ -141,10 +108,10 @@
     <Compile Include="TiledSharp\TmxTileOffset.cs" />
     <Compile Include="TiledSharp\TmxTileset.cs" />
     <Compile Include="TiledSharp\TmxTilesetTile.cs" />
-    <Compile Include="TileGroup.cs" />
-    <Compile Include="TileGrouper.cs" />
-    <Compile Include="TilesetDatBuilder.cs" />
-    <Compile Include="TilesetOptimizer.cs" />
+    <Compile Include="Tiles\TileGroup.cs" />
+    <Compile Include="Tiles\TileGrouper.cs" />
+    <Compile Include="Tiles\TilesetDatBuilder.cs" />
+    <Compile Include="Tiles\TilesetOptimizer.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

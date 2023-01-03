@@ -79,37 +79,63 @@ namespace VEMC
             }
 
             optimizedTileset.Palette = colors.ToArray();
-            int width = tset.Image.Width;
-            int height = tset.Image.Height;
-            int num5 = nextTileId * 8 * 8;
-            int num6 = 0;
-            for (int m = 0; m < TilesetOptimizer.TILESET_SIZES.Length; m++)
+
+            // Declare variable for the size of the next tile
+            int nextTileSize = nextTileId * 8 * 8;
+
+            // Declare variable to store the size of the optimized tileset
+            int optimizedTilesetSize = 0;
+
+            // Find the size of the optimized tileset that can hold all the tiles
+            // Iterate through all the possible sizes in the TILESET_SIZES array
+            for (int i = 0; i < TilesetOptimizer.TILESET_SIZES.Length; i++)
             {
-                if (num5 < TilesetOptimizer.TILESET_SIZES[m] * TilesetOptimizer.TILESET_SIZES[m])
+                // If the size of the next tile fits in the current size of the optimized tileset
+                if (nextTileSize < TilesetOptimizer.TILESET_SIZES[i] * TilesetOptimizer.TILESET_SIZES[i])
                 {
-                    num6 = TilesetOptimizer.TILESET_SIZES[m];
+                    // Store the size of the optimized tileset
+                    optimizedTilesetSize = TilesetOptimizer.TILESET_SIZES[i];
+                    // Break out of the loop
                     break;
                 }
             }
-            if (num6 > 0)
+
+            // If a suitable size for the optimized tileset was found
+            if (optimizedTilesetSize > 0)
             {
-                byte[] array3 = new byte[num6 * num6];
-                for (int n = 0; n < nextTileId - 1; n++)
+                // Declare a byte array to store the indexed image data for the optimized tileset
+                byte[] indexedImageData = new byte[optimizedTilesetSize * optimizedTilesetSize];
+
+                // Iterate through all the tiles in the tileData array except for the last one
+                for (int i = 0; i < nextTileId - 1; i++)
                 {
-                    int num7 = n * 8 % num6;
-                    int num8 = n * 8 / num6 * 8;
-                    for (int num9 = 0; num9 < 64; num9++)
+                    // Calculate the x position of the tile in the optimized tileset
+                    int xPos = i * 8 % optimizedTilesetSize;
+                    // Calculate the y position of the tile in the optimized tileset
+                    int yPos = i * 8 / optimizedTilesetSize * 8;
+
+                    // Iterate through all the pixels in the tile
+                    for (int j = 0; j < 64; j++)
                     {
-                        int num10 = num9 % 8;
-                        int num11 = num9 / 8;
-                        int num12 = (num8 + num11) * num6 + (num7 + num10);
-                        array3[num12] = tileData[n][num9];
+                        // Calculate the x position of the pixel within the tile
+                        int pixelXPos = j % 8;
+                        // Calculate the y position of the pixel within the tile
+                        int pixelYPos = j / 8;
+                        // Calculate the index of the pixel in the indexedImageData array
+                        int pixelIndex = (yPos + pixelYPos) * optimizedTilesetSize + (xPos + pixelXPos);
+                        // Set the pixel value in the indexedImageData array
+                        indexedImageData[pixelIndex] = tileData[i][j];
                     }
                 }
-                optimizedTileset.Width = num6;
-                optimizedTileset.IndexedImage = array3;
+
+                // Set the width and indexed image data of the optimized tileset object
+                optimizedTileset.Width = optimizedTilesetSize;
+                optimizedTileset.IndexedImage = indexedImageData;
+
+                // Return the optimized tileset object
                 return optimizedTileset;
             }
+
             throw new InvalidOperationException(string.Format("The tileset is too large to be stored in a {0}x{0} pixel image.", TilesetOptimizer.TILESET_SIZES[TilesetOptimizer.TILESET_SIZES.Length - 1]));
         }
         private static Point LoadImage(string file, TmxColor transColor, out List<Color> colors, out byte[] pixelcols)

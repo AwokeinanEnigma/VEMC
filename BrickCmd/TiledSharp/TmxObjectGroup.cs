@@ -46,22 +46,34 @@ namespace TiledSharp
             public PropertyDict Properties { get; private set; }
             public TmxObject(XElement xObject)
             {
+
+
                 Id = (int?)xObject.Attribute("id") ?? 0;
                 Name = (string)xObject.Attribute("name") ?? String.Empty;
-                Debug.Log($"Object name: {Name}");
-                X = ((int)(float)xObject.Attribute("x"));
-                Y = ((int)(float)xObject.Attribute("y"));
-                Width = (int?)(float)xObject.Attribute("width") ?? 0;
-                Height = (int?)(float)xObject.Attribute("height") ?? 0;
+
+                Debug.Log($"Object: {Name}");
+
+                X = (int)(float?)xObject.Attribute("x");
+                Y = (int)(float?)xObject.Attribute("y");
+
+                Width = (int?)(float?)xObject.Attribute("width") ?? 0;
+                Height = (int?)(float?)xObject.Attribute("height") ?? 0;
+
                 if (xObject.Attribute("class") != null)
+                {
                     Type = (string)xObject.Attribute("class") ?? String.Empty;
+                }
                 else
+                {
                     Type = (string)xObject.Attribute("type") ?? String.Empty;
+                }
+
                 Visible = (bool?)xObject.Attribute("visible") ?? true;
                 Rotation = (int?)xObject.Attribute("rotation") ?? 0;
 
                 var xGid = xObject.Attribute("gid");
                 var xEllipse = xObject.Element("ellipse");
+                
                 var xPolygon = xObject.Element("polygon");
                 var xPolyline = xObject.Element("polyline");
 

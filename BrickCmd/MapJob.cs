@@ -162,9 +162,9 @@ namespace VEMC
 
             string fileName2 = string.Format("{0}\\Data\\Maps\\{1}.mdat", Utility.AppDirectory, map.Properties["name"]);
             nbtFile.SaveToFile(fileName2, NbtCompression.GZip);
-            Utility.ConsoleWrite("Saved. Press enter to exit.");
+            Utility.ConsoleWrite("Saved. Press any key to exit.");
 
-            Console.ReadLine();
+            Console.ReadKey();
         }
 
         private Dictionary<string, List<TmxObjectGroup.TmxObject>> GetObjectsByType(TmxList<TmxObjectGroup> groupList)
