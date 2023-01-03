@@ -9,19 +9,16 @@ namespace VEMC
     {
         private static void Main(string[] args)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "VEMC.Tiles.config.txt";
+            Debug.Initialize();
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string result = reader.ReadToEnd();
-                Debug.Log($"result {result}");
-            }
+            IniFile file = new IniFile();
+            file.Load(Utility.AppDirectory + $"\\config.ini");
+            string redirectPath = file["basicData"]["makeAtPath"].ToString();
+
+
 
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Version version = Assembly.GetEntryAssembly().GetName().Version;
-            Debug.Initialize();
 
             Console.WriteLine("VEMC Version {0}.{1}.{2} CMD - ", version.Major, version.Minor, version.Build);
             Console.WriteLine("Using NUGET since the dawn of time");

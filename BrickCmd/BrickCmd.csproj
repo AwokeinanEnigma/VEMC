@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{021C7C3B-0E16-4A29-BCE8-0725AFAE0E5B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VEMC</RootNamespace>
     <AssemblyName>VEMC</AssemblyName>
@@ -76,6 +76,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ini.cs" />
     <Compile Include="fNbt.cs" />
     <Compile Include="MapPartBuilder.cs" />
     <Compile Include="Debug.cs" />
@@ -121,7 +122,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Tiles\config.txt" />
     <Content Include="violet.ico" />
   </ItemGroup>
   <ItemGroup>
