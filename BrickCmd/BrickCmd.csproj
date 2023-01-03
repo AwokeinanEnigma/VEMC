@@ -84,6 +84,8 @@
     <Compile Include="MapBuildException.cs" />
     <Compile Include="MapJob.cs" />
     <Compile Include="PartBuilders\AudioBuilder.cs" />
+    <Compile Include="PartBuilders\DoorAndTriggerBuilder.cs" />
+    <Compile Include="PartBuilders\NPCBuilder.cs" />
     <Compile Include="PartBuilders\TerrainBuilder.cs" />
     <Compile Include="MapPropertyException.cs" />
     <Compile Include="MeshBuilder.cs" />
